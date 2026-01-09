@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vampire Hunter Survivor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- HUD -->
+        <div id="hud">
+            <div class="hud-top">
+                <div class="exp-bar-container">
+                    <div class="level-badge" id="hud-level">LV 1</div>
+                    <div class="exp-bar">
+                        <div class="exp-fill" id="hud-exp-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="game-timer" id="hud-timer">00:00</div>
+                <div class="kill-count">💀 <span id="hud-kills">0</span></div>
+            </div>
+
+            <div class="hp-bar-container">
+                <div class="hp-bar">
+                    <div class="hp-fill" id="hud-hp-fill" style="width: 100%"></div>
+                    <span class="hp-text" id="hud-hp-text">100 / 100</span>
+                </div>
+            </div>
+
+            <div class="weapons-container" id="hud-weapons">
+                <!-- Weapon icons will be added here dynamically -->
+            </div>
+
+            <div id="boss-warning" class="boss-warning">WARNING!<br>BOSS APPROACHING</div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="screen-start" class="screen active">
+            <h1>VAMPIRE<br>SURVIVOR</h1>
+            <p>生き残るために戦え</p>
+            <p class="controls-hint">移動: WASD / 矢印キー / タッチ</p>
+            <button id="btn-start" class="btn-primary">START GAME</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="screen-gameover" class="screen">
+            <h1>GAME OVER</h1>
+            <div class="result-stats">
+                <div class="stat-row">
+                    <span>生存時間:</span>
+                    <span id="result-time">00:00</span>
+                </div>
+                <div class="stat-row">
+                    <span>レベル:</span>
+                    <span id="result-level">1</span>
+                </div>
+                <div class="stat-row">
+                    <span>撃破数:</span>
+                    <span id="result-kills">0</span>
+                </div>
+            </div>
+            <button id="btn-restart" class="btn-primary">RETRY</button>
+        </div>
+
+        <!-- Level Up Screen -->
+        <div id="screen-levelup" class="screen">
+            <h2>LEVEL UP!</h2>
+            <p>アップグレードを選択してください</p>
+            <div class="upgrade-cards" id="upgrade-container">
+                <!-- Upgrade cards will be generated here -->
+            </div>
+        </div>
+
+        <!-- Pause Screen -->
+        <div id="screen-pause" class="screen">
+            <h2>PAUSED</h2>
+            <button id="btn-resume" class="btn-primary">RESUME</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/game.js"></script>
+</body>
+
+</html>
