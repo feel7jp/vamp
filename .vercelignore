@@ -1,0 +1,6 @@
+server.py
+start.sh
+.git
+.DS_Store
+__pycache__
+*.pyc
