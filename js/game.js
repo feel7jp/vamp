@@ -126,6 +126,14 @@ class Game {
     }
 
     update(deltaTime) {
+        // パフォーマンスモニタリング: エンティティ数の追跡
+        const entityCount = this.enemies.length + this.projectiles.length + this.particles.length + this.pickups.length;
+        
+        // デバッグ: 大量のエンティティがある場合に警告（100個以上）
+        if (entityCount > 100 && Math.random() < 0.01) { // 1%の確率でログ出力（スパム防止）
+            console.warn(`⚠️ パフォーマンス警告: エンティティ総数=${entityCount} (敵:${this.enemies.length}, 発射物:${this.projectiles.length}, パーティクル:${this.particles.length}, アイテム:${this.pickups.length})`);
+        }
+        
         // Update game time
         this.gameTime += deltaTime;
         
@@ -185,6 +193,7 @@ class Game {
         
         // フレーム毎のクリーンアップ: 削除マークされたエンティティを配列から除外
         // Note: filter()は新しい配列を生成するため、大量のエンティティがある場合はGC負荷あり
+        // パフォーマンス最適化: splice()を使った in-place 削除に変更を検討
         this.enemies = this.enemies.filter(e => !e.markedForDeletion);
         // projectilesは爆発処理の後にクリーンアップ（下記参照）
         this.explosions = this.explosions.filter(e => !e.markedForDeletion);
@@ -194,6 +203,8 @@ class Game {
         
         // 衝突判定: 発射物 vs 敵
         // Note: O(n*m)の計算量。大量のエンティティがある場合は空間分割を検討
+        // パフォーマンス問題の可能性: 敵100体 × 発射物50個 = 5000回の衝突チェック
+        const collisionStartTime = performance.now();
         this.projectiles.forEach(proj => {
             if (proj.type === 'garlic') return; // Handled internally
             
@@ -216,6 +227,12 @@ class Game {
                  this.spawnExplosion(proj.x, proj.y, proj.area, proj.damage);
             }
         });
+        
+        // パフォーマンス計測: 衝突判定が1ms以上かかる場合は警告
+        const collisionTime = performance.now() - collisionStartTime;
+        if (collisionTime > 1.0 && Math.random() < 0.05) { // 5%の確率でログ
+            console.warn(`⚠️ 衝突判定パフォーマンス: ${collisionTime.toFixed(2)}ms (敵:${this.enemies.length}, 発射物:${this.projectiles.length})`);
+        }
         
         // projectilesのクリーンアップ（爆発処理の後）
         this.projectiles = this.projectiles.filter(p => !p.markedForDeletion);
@@ -260,7 +277,8 @@ class Game {
     }
     
     spawnHitParticles(x, y, color) {
-        for (let i = 0; i < 5; i++) {
+        // パフォーマンス最適化: パーティクル数を5→3に削減
+        for (let i = 0; i < 3; i++) {
             this.particles.push(new Particle(this, x, y, color, Utils.Math.randRange(1, 3), Utils.Math.randRange(2, 4), Utils.Math.randRange(200, 400)));
         }
     }

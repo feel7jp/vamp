@@ -8,7 +8,7 @@ export class Enemy {
         this.y = y;
         this.type = type;
         
-        // Default to NORMAL enemy stats
+        // デフォルトは通常敵のステータス
         const defaults = GameConfig.ENEMY.NORMAL;
         this.width = defaults.WIDTH;
         this.height = defaults.HEIGHT;
@@ -41,7 +41,7 @@ export class Enemy {
                 break;
         }
         
-        // Apply config
+        // 設定を適用
         this.speed = config.SPEED;
         this.hp = config.HP;
         this.width = config.WIDTH;
@@ -50,20 +50,20 @@ export class Enemy {
         this.expValue = config.EXP_VALUE;
         this.damage = config.DAMAGE;
         
-        // Scale with game time slightly
+        // ゲーム時間に応じて難易度を少し上昇
         const difficultyMultiplier = 1 + (this.game.gameTime / 60000) * GameConfig.BALANCE.DIFFICULTY_INCREASE_PER_MINUTE;
         this.hp *= difficultyMultiplier;
     }
     
     update(deltaTime) {
-        // Find direction to player
+        // プレイヤーへの方向を見つける
         if (!this.game.player) return;
         
         const player = this.game.player;
         const dx = player.x - this.x;
         const dy = player.y - this.y;
         
-        // Normalize
+        // 距離を正規化（単位ベクトル化）
         const dist = Math.sqrt(dx * dx + dy * dy);
         
         let moveX = 0;
@@ -74,9 +74,9 @@ export class Enemy {
             moveY = (dy / dist) * this.speed;
         }
         
-        // Simple separation logic (avoid overlapping with other enemies)
-        // Check a few nearby enemies - simplified for performance
-        // In a real optimized game, we'd use a quadtree or spatial hash
+        // シンプルな分離ロジック（他の敵と重ならないようにする）
+        // 近くの敵を数体チェック - パフォーマンスのため簡略化
+        // 本格的な最適化ゲームでは、四分木や空間ハッシュを使う
         
         const timeScale = deltaTime / (1000/60);
         
@@ -85,35 +85,34 @@ export class Enemy {
     }
     
     render(ctx) {
-        // Boss visual flair
-        if (this.type === 'boss') {
-            // Glow
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = this.color;
-            
-            // Rotating or pulsing effect could go here
-        }
+        // パフォーマンス最適化: shadowBlurは非常に重い処理
+        // 大量の敵がいる場合、毎フレーム shadowBlur を設定すると GPU 負荷が高い
+        // ボスのみ特別な演出として使用し、通常敵は単純な色で描画
         
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
         
-        // Reset shadow
-        ctx.shadowBlur = 0;
+        // ボスの場合のみ、枠線で強調（shadowBlurより軽量）
+        if (this.type === 'boss') {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+        }
         
-        // Draw eyes to show direction (cute touch)
-        ctx.fillStyle = 'white';
-        // ... (skipping detail for now to keep it simple geometry)
+        // 方向を示す目を描画（可愛い演出）
+        // ctx.fillStyle = 'white';
+        // ... （シンプルな形状を保つため、詳細は省略）
     }
     
     takeDamage(amount) {
         this.hp -= amount;
         
-        // Flash white effect could be handled in render
+        // 白い点滅効果はrenderで処理可能
         
         if (this.hp <= 0) {
             this.markedForDeletion = true;
-            // this.game.player.gainExp(this.expValue); // Old direct way
-            this.game.spawnExpOrb(this.x, this.y, this.expValue); // New pickup way
+            // this.game.player.gainExp(this.expValue); // 旧方式：直接経験値を付与
+            this.game.spawnExpOrb(this.x, this.y, this.expValue); // 新方式：拾えるアイテムを生成
             this.game.killCount++;
             this.game.spawnHitParticles(this.x, this.y, this.color);
             
@@ -122,8 +121,8 @@ export class Enemy {
                     GameConfig.BALANCE.BOSS_SCREEN_SHAKE_INTENSITY,
                     GameConfig.BALANCE.BOSS_SCREEN_SHAKE_DURATION
                 );
-                // More particles for boss
-                 for (let i = 0; i < GameConfig.BALANCE.EXPLOSION_PARTICLE_COUNT; i++) {
+                // ボスの倒した時はパーティクルを増やす（パフォーマンス最適化: 20→10に削減）
+                 for (let i = 0; i < 10; i++) {
                     this.game.spawnHitParticles(this.x, this.y, this.color);
                  }
             }

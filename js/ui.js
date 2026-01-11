@@ -22,15 +22,15 @@ export class UIManager {
     }
     
     setupResultButtons() {
-        // Restart button handled in Game class, but we could move listener here
-        // For consistency with existing code, we leave event listeners in Game init
+        // 再スタートボタンはGameクラスで処理しているが、ここに移すこともできる
+        // 既存コードとの一貫性のため、イベントリスナーはGame initに配置
     }
 
     showScreen(screenName) {
-        // Hide all screens
+        // すべての画面を非表示
         Object.values(this.screens).forEach(s => s.classList.remove('active'));
         
-        // Show target
+        // 指定された画面を表示
         if (this.screens[screenName]) {
             this.screens[screenName].classList.add('active');
         }

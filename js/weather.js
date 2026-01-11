@@ -47,7 +47,9 @@ export class WeatherSystem {
     initParticles() {
         this.particles = [];
         if (this.type === 'rain') {
-            for (let i = 0; i < 100; i++) {
+            // パフォーマンス最適化: パーティクル数を100→50に削減
+            // 視覚的な品質を維持しつつ、レンダリング負荷を半減
+            for (let i = 0; i < 50; i++) {
                 this.particles.push({
                     x: Math.random() * this.game.width,
                     y: Math.random() * this.game.height,
@@ -57,6 +59,7 @@ export class WeatherSystem {
                 });
             }
         } else if (this.type === 'snow') {
+            // 雪は元々50個なので変更なし
              for (let i = 0; i < 50; i++) {
                 this.particles.push({
                     x: Math.random() * this.game.width,

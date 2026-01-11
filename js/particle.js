@@ -34,7 +34,11 @@ export class Particle {
     }
     
     render(ctx) {
-        ctx.globalAlpha = this.life / this.maxLife;
+        // パフォーマンス最適化: globalAlpha の変更を最小限に
+        const alpha = this.life / this.maxLife;
+        if (alpha <= 0) return; // 完全に透明な場合はスキップ
+        
+        ctx.globalAlpha = alpha;
         ctx.fillStyle = this.color;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.currentSize, 0, Math.PI * 2);
@@ -127,18 +131,16 @@ export class ExpOrb {
     }
     
     render(ctx) {
+        // パフォーマンス最適化: shadowBlur を削除（重い処理）
+        // 大量の経験値オーブがある場合、shadowBlur は GPU に大きな負荷
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
         ctx.fill();
-        ctx.strokeStyle = 'white';
+        
+        // 枠線のみで視認性を確保（shadowBlurより軽量）
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
         ctx.lineWidth = 1;
         ctx.stroke();
-        
-        // Glow
-        ctx.shadowBlur = 5;
-        ctx.shadowColor = this.color;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
     }
 }

@@ -16,7 +16,7 @@ export class Bomb extends Weapon {
     }
     
     fireLogic() {
-        // Throw at random nearby enemy or random direction
+        // 近くの敵に投げる。いなければランダムな方向へ
         let targetX, targetY;
         const nearest = this.getNearestEnemy();
         
@@ -30,7 +30,7 @@ export class Bomb extends Weapon {
             targetY = this.owner.y + Math.sin(angle) * dist;
         }
         
-        // Calculate velocity to reach target in ~1 second (60 frames)
+        // 約1秒（60フレーム）で目標に到達する速度を計算
         const timeToTarget = 60;
         const vx = (targetX - this.owner.x) / timeToTarget;
         const vy = (targetY - this.owner.y) / timeToTarget;
@@ -53,7 +53,7 @@ export class Bomb extends Weapon {
         
         this.game.enemies.forEach(e => {
             const d = Utils.Vec2.dist(this.owner, e);
-            if (d < minDist && d < 400) { // Only target reasonably close
+            if (d < minDist && d < 400) { // 適度に近い敵だけをターゲットにする
                 minDist = d;
                 nearest = e;
             }
@@ -66,44 +66,44 @@ export class BombProjectile extends Projectile {
     constructor(game, x, y, vx, vy, damage, life, type, area) {
         super(game, x, y, vx, vy, damage, life, type);
         this.area = area;
-        this.gravity = 0.2; // Fake Z-axis gravity visual
+        this.gravity = 0.2; // Z軸方向の疑似重力（見た目の演出）
         this.z = 0;
-        this.vz = -5; // Initial upward velocity for arc
-        this.groundY = y; // Roughly target Y? No, arc is visual only.
-        // Actually, let's treat x/y as ground coordinates and add a visual offset Y
+        this.vz = -5; // 放物線を描くための初期上向き速度
+        this.groundY = y; // 地面のY座標（演出用のみ）
+        // x/yを地面の座標として扱い、視覚的なオフセットYを追加
         
-        // Re-calculate to match the target logic strictly:
-        // Life defines when it explodes.
+        // 厳密な目標ロジックに合わせて再計算:
+        // life変数が爆発タイミングを決定
         this.maxLife = life; 
     }
     
     update(deltaTime) {
-        // Normal XY movement
+        // 通常のXY方向の移動
         super.update(deltaTime);
         
-        // Visual arc simulation
-        // Start at z=0, go up, come down.
-        // Simple sin wave based on life?
+        // 放物線の視覚的なシミュレーション
+        // z=0から始まり、上昇して下降する
+        // 寿命に基づいた単純なsin波
         const progress = 1 - (this.life / this.maxLife);
-        this.z = Math.sin(progress * Math.PI) * -50; // Arc height 50px
+        this.z = Math.sin(progress * Math.PI) * -50; // 放物線の高さ50px
         
-        // Spin logic could go here
+        // 回転ロジックもここに追加可能
     }
     
     render(ctx) {
-        // Shadow on ground
+        // 地面に影を描画
         ctx.beginPath();
         ctx.ellipse(this.x, this.y, 5, 2.5, 0, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(0,0,0,0.5)';
         ctx.fill();
         
-        // Bomb sprite (with Z offset)
+        // 爆弾本体（Z軸オフセット付き）
         ctx.beginPath();
         ctx.arc(this.x, this.y + this.z, GameConfig.WEAPONS.BOMB.PROJECTILE_SIZE, 0, Math.PI * 2);
         ctx.fillStyle = GameConfig.WEAPONS.BOMB.COLOR;
         ctx.fill();
         
-        // Fuse
+        // 導火線
         ctx.fillStyle = 'red';
         ctx.fillRect(this.x - 2, this.y + this.z - 8, 4, 4);
     }

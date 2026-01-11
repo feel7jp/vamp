@@ -77,12 +77,16 @@ export class Knife extends Weapon {
             const nearest = this.getNearestEnemy();
             if (nearest) {
                 const angle = Utils.Vec2.angle(this.owner, nearest);
-                vx = Math.cos(angle);
-                vy = Math.sin(angle);
+                // 弾に誤差を追加: ±0.15ラジアン（約±8.6度）のランダムな角度誤差
+                const angleDeviation = (Math.random() - 0.5) * 0.3; // -0.15 ~ +0.15
+                const adjustedAngle = angle + angleDeviation;
+                vx = Math.cos(adjustedAngle);
+                vy = Math.sin(adjustedAngle);
             } else {
-                // No enemies, shoot right
-                vx = 1;
-                vy = 0;
+                // No enemies, shoot right with slight randomness
+                const randomAngle = (Math.random() - 0.5) * 0.3;
+                vx = Math.cos(randomAngle);
+                vy = Math.sin(randomAngle);
             }
             
             // Normalize
@@ -238,11 +242,12 @@ export class AuraProjectile extends Projectile {
             this.game.enemies.forEach(e => {
                 if (Utils.Collision.circleRect(this, {x: e.x - e.width/2, y: e.y - e.height/2, w: e.width, h: e.height})) {
                      // Deal damage
-                     // We need to return this event to the game loop or handle it here
-                     // For simplicity, let's mark it 'hit' so game loop processes it? 
-                     // Or just apply damage directly if we have access
+                     // パフォーマンス最適化: ガーリックのダメージではパーティクルを生成しない
+                     // 理由: 200msごとに全敵に対してパーティクル生成すると、
+                     //       敵20体 × 5パーティクル = 100個/秒 の生成で画面が埋まる
                      e.takeDamage(this.damage);
                      this.game.spawnDamageNumber(e.x, e.y, this.damage);
+                     // this.game.spawnHitParticles(e.x, e.y, e.color); // ← 削除
                 }
             });
         }

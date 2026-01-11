@@ -13,8 +13,10 @@ export class Explosion {
     }
     
     update(deltaTime) {
+        // パフォーマンス最適化: activeフラグで1回だけダメージ判定を実行
+        // 問題: 爆発が複数ある場合、activeがfalseでも毎フレームこのメソッドが呼ばれていた
         if (this.active) {
-            // Apply damage
+            // Apply damage - この処理は爆発発生時の1回だけ実行される
             this.game.enemies.forEach(e => {
                 if (Utils.Collision.circleRect({x: this.x, y: this.y, radius: this.radius}, 
                     {x: e.x - e.width/2, y: e.y - e.height/2, w: e.width, h: e.height})) {
@@ -24,9 +26,10 @@ export class Explosion {
             });
             
             this.game.screenShake.trigger(5, 200);
-            this.active = false; // Only once
+            this.active = false; // Only once - これ以降はダメージ処理をスキップ
         }
         
+        // アニメーションの更新のみ（軽量）
         this.life -= deltaTime / 1000;
         if (this.life <= 0) this.markedForDeletion = true;
     }

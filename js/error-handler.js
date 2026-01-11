@@ -1,6 +1,6 @@
 /**
- * Error Handler for Debugging
- * Displays errors prominently on screen for easier troubleshooting
+ * デバッグ用エラーハンドラー
+ * エラーを画面に大きく表示してトラブルシューティングを簡単にする
  */
 
 export class ErrorHandler {
@@ -11,7 +11,7 @@ export class ErrorHandler {
     }
     
     createErrorDisplay() {
-        // Create error overlay
+        // エラーオーバーレイを作成
         this.overlay = document.createElement('div');
         this.overlay.id = 'error-overlay';
         this.overlay.style.cssText = `
@@ -35,7 +35,7 @@ export class ErrorHandler {
     }
     
     setupGlobalHandler() {
-        // Catch all unhandled errors
+        // すべての未処理エラーをキャッチ
         window.addEventListener('error', (event) => {
             this.handleError({
                 message: event.message,
@@ -46,7 +46,7 @@ export class ErrorHandler {
             });
         });
         
-        // Catch unhandled promise rejections
+        // 未処理のPromise拒否をキャッチ
         window.addEventListener('unhandledrejection', (event) => {
             this.handleError({
                 message: 'Unhandled Promise Rejection: ' + event.reason,
@@ -187,7 +187,7 @@ export class ErrorHandler {
     }
 }
 
-// Auto-initialize
+// 自動初期化
 if (typeof window !== 'undefined') {
     window.errorHandler = new ErrorHandler();
 }
