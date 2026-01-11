@@ -453,10 +453,10 @@ p {
     }
 
     .hp-bar-container {
-        bottom: calc(80px + var(--safe-area-bottom));
+        bottom: calc(150px + var(--safe-area-bottom));
     }
 
     .weapons-container {
-        bottom: calc(120px + var(--safe-area-bottom));
+        bottom: calc(190px + var(--safe-area-bottom));
     }
 }
