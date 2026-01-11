@@ -81,7 +81,7 @@ export const GameConfig = {
       BASE_DAMAGE: 100,
       BASE_COOLDOWN: 1000, // ミリ秒（ティックレート）
       STARTING_RANGE: 60,
-      TICK_RATE: 200, // ミリ秒（ダメージ間隔）
+      TICK_RATE: 1000, // ミリ秒（ダメージ間隔）
       COLOR: 'rgba(255, 100, 100, 0.1)'
     },
     BOMB: {
