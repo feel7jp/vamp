@@ -10,6 +10,7 @@ import sys
 import webbrowser
 import threading
 import time
+import socket
 
 # サーバー設定
 PORT = 8080
@@ -33,8 +34,23 @@ def open_browser():
     print(f"🌐 ブラウザを起動しています: {url}")
     webbrowser.open(url)
 
+def get_local_ip():
+    """ローカルIPアドレスを取得する"""
+    try:
+        # ダミーのUDP接続を作成してローカルIPを取得
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        return local_ip
+    except Exception:
+        return None
+
 def main():
     """メイン関数"""
+    
+    # ローカルIPアドレスを取得
+    local_ip = get_local_ip()
     
     # 起動メッセージを表示
     print("=" * 50)
@@ -44,6 +60,8 @@ def main():
     print("サーバーを起動しています...")
     print()
     print(f"✅ ゲームURL: http://{HOST}:{PORT}")
+    if local_ip:
+        print(f"📱 WiFi接続用URL: http://{local_ip}:{PORT}")
     print()
     print("ブラウザが自動的に開きます...")
     print("終了するには Ctrl+C を押してください")

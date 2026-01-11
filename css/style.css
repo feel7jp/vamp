@@ -19,8 +19,9 @@
     margin: 0;
     padding: 0;
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
     touch-action: none;
-    /* Prevent default touch actions like scroll */
 }
 
 body {
@@ -30,6 +31,7 @@ body {
     overflow: hidden;
     width: 100vw;
     height: 100vh;
+    position: fixed;
 }
 
 #game-container {
@@ -44,6 +46,10 @@ canvas {
     width: 100%;
     height: 100%;
     background-color: var(--bg-color);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* UI Screens */
@@ -141,10 +147,13 @@ p {
 .exp-bar-container,
 .level-badge,
 .exp-bar,
+.exp-fill,
 .game-timer,
 .kill-count,
 .hp-bar-container,
 .hp-bar,
+.hp-fill,
+.hp-text,
 .weapons-container,
 .weapon-icon,
 .boss-warning {
@@ -444,6 +453,10 @@ p {
     }
 
     .hp-bar-container {
-        bottom: calc(15px + var(--safe-area-bottom));
+        bottom: calc(80px + var(--safe-area-bottom));
+    }
+
+    .weapons-container {
+        bottom: calc(120px + var(--safe-area-bottom));
     }
 }
