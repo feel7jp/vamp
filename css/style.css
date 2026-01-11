@@ -283,7 +283,6 @@ p {
     gap: 20px;
     max-width: 800px;
     width: 100%;
-    pointer-events: auto;
 }
 
 .upgrade-card {
