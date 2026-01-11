@@ -113,8 +113,10 @@ export class ExpOrb {
             this.x += Math.cos(angle) * this.speed * (deltaTime / 16);
             this.y += Math.sin(angle) * this.speed * (deltaTime / 16);
             
-            // Accelerate
-            this.speed += 0.5;
+            // Accelerate based on deltaTime, with max speed cap
+            const acceleration = 0.5 * (deltaTime / 16);
+            const maxSpeed = 20; // Cap maximum speed
+            this.speed = Math.min(this.speed + acceleration, maxSpeed);
             
             if (dist < this.game.player.radius) {
                 this.markedForDeletion = true;
