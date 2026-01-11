@@ -1,4 +1,5 @@
 import { Utils } from './utils.js';
+import { GameConfig } from './game-config.js';
 
 export class Enemy {
     constructor(game, x, y, type = 'normal') {
@@ -7,14 +8,15 @@ export class Enemy {
         this.y = y;
         this.type = type;
         
-        // Stats based on type
-        this.width = 20;
-        this.height = 20;
-        this.color = '#ff4757'; // Red
-        this.speed = 1.5;
-        this.hp = 10;
-        this.damage = 10;
-        this.expValue = 10;
+        // Default to NORMAL enemy stats
+        const defaults = GameConfig.ENEMY.NORMAL;
+        this.width = defaults.WIDTH;
+        this.height = defaults.HEIGHT;
+        this.color = defaults.COLOR;
+        this.speed = defaults.SPEED;
+        this.hp = defaults.HP;
+        this.damage = defaults.DAMAGE;
+        this.expValue = defaults.EXP_VALUE;
         
         this.markedForDeletion = false;
         
@@ -22,37 +24,34 @@ export class Enemy {
     }
     
     setupStats() {
+        let config;
+        
         switch(this.type) {
             case 'fast':
-                this.speed = 2.5;
-                this.hp = 5;
-                this.color = '#ffd700'; // Gold/Yellow
-                this.width = 15;
-                this.height = 15;
+                config = GameConfig.ENEMY.FAST;
                 break;
             case 'tank':
-                this.speed = 1.0;
-                this.hp = 30;
-                this.color = '#2ed573'; // Green
-                this.width = 30;
-                this.height = 30;
-                this.expValue = 30;
+                config = GameConfig.ENEMY.TANK;
                 break;
             case 'boss':
-                this.speed = 2.0;
-                this.hp = 500;
-                this.width = 80;
-                this.height = 80;
-                this.color = '#8e44ad'; // Purple
-                this.expValue = 1000;
-                this.damage = 25;
+                config = GameConfig.ENEMY.BOSS;
                 break;
             default: // normal
+                config = GameConfig.ENEMY.NORMAL;
                 break;
         }
         
+        // Apply config
+        this.speed = config.SPEED;
+        this.hp = config.HP;
+        this.width = config.WIDTH;
+        this.height = config.HEIGHT;
+        this.color = config.COLOR;
+        this.expValue = config.EXP_VALUE;
+        this.damage = config.DAMAGE;
+        
         // Scale with game time slightly
-        const difficultyMultiplier = 1 + (this.game.gameTime / 60000) * 0.2;
+        const difficultyMultiplier = 1 + (this.game.gameTime / 60000) * GameConfig.BALANCE.DIFFICULTY_INCREASE_PER_MINUTE;
         this.hp *= difficultyMultiplier;
     }
     
@@ -119,9 +118,12 @@ export class Enemy {
             this.game.spawnHitParticles(this.x, this.y, this.color);
             
             if (this.type === 'boss') {
-                this.game.screenShake.trigger(10, 500); // Intense shake
+                this.game.screenShake.trigger(
+                    GameConfig.BALANCE.BOSS_SCREEN_SHAKE_INTENSITY,
+                    GameConfig.BALANCE.BOSS_SCREEN_SHAKE_DURATION
+                );
                 // More particles for boss
-                 for (let i = 0; i < 20; i++) {
+                 for (let i = 0; i < GameConfig.BALANCE.EXPLOSION_PARTICLE_COUNT; i++) {
                     this.game.spawnHitParticles(this.x, this.y, this.color);
                  }
             }

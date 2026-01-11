@@ -1,4 +1,5 @@
 import { Utils } from './utils.js';
+import { GameConfig } from './game-config.js';
 import { Knife, Garlic } from './weapon.js';
 import { Bomb } from './bomb.js';
 
@@ -7,16 +8,16 @@ export class Player {
         this.game = game;
         this.x = x;
         this.y = y;
-        this.radius = 15;
-        this.color = '#4facfe'; // Cyan blue
+        this.radius = GameConfig.PLAYER.RADIUS;
+        this.color = GameConfig.PLAYER.COLOR;
         
         // Stats
-        this.speed = 3; // Pixels per frame
-        this.hp = 100;
-        this.maxHp = 100;
-        this.level = 1;
-        this.exp = 0;
-        this.nextLevelExp = 100;
+        this.speed = GameConfig.PLAYER.SPEED;
+        this.hp = GameConfig.PLAYER.STARTING_HP;
+        this.maxHp = GameConfig.PLAYER.STARTING_HP;
+        this.level = GameConfig.PLAYER.STARTING_LEVEL;
+        this.exp = GameConfig.PLAYER.STARTING_EXP;
+        this.nextLevelExp = GameConfig.PLAYER.INITIAL_NEXT_LEVEL_EXP;
         
         // Weapons
         this.weapons = [];
@@ -31,11 +32,17 @@ export class Player {
             right: false
         };
         
+        // Touch control state
+        this.touchX = 0;
+        this.touchY = 0;
+        this.isTouching = false;
+        
         // Setup input listeners
         this.setupInput();
     }
     
     setupInput() {
+        // Keyboard controls
         window.addEventListener('keydown', (e) => {
             switch(e.key) {
                 case 'ArrowUp': case 'w': case 'W': this.keys.up = true; break;
@@ -54,8 +61,53 @@ export class Player {
             }
         });
         
-        // Basic touch controls (simple tap-to-move-towards could be added here, 
-        // or a virtual joystick. For now, we'll rely on keyboard)
+        // Touch controls
+        const canvas = this.game.canvas;
+        
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            this.touchX = touch.clientX - rect.left;
+            this.touchY = touch.clientY - rect.top;
+            this.isTouching = true;
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            this.touchX = touch.clientX - rect.left;
+            this.touchY = touch.clientY - rect.top;
+        });
+        
+        canvas.addEventListener('touchend', () => {
+            this.isTouching = false;
+        });
+        
+        // Mouse controls (same logic as touch)
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            this.touchX = e.clientX - rect.left;
+            this.touchY = e.clientY - rect.top;
+            this.isTouching = true;
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (this.isTouching) {
+                const rect = canvas.getBoundingClientRect();
+                this.touchX = e.clientX - rect.left;
+                this.touchY = e.clientY - rect.top;
+            }
+        });
+        
+        canvas.addEventListener('mouseup', () => {
+            this.isTouching = false;
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            this.isTouching = false;
+        });
     }
     
     update(deltaTime) {
@@ -63,17 +115,35 @@ export class Player {
         let dx = 0;
         let dy = 0;
         
-        if (this.keys.up) dy -= 1;
-        if (this.keys.down) dy += 1;
-        if (this.keys.left) dx -= 1;
-        if (this.keys.right) dx += 1;
-        
-        // Normalize vector to prevent faster diagonal movement
-        if (dx !== 0 || dy !== 0) {
-            const length = Math.sqrt(dx * dx + dy * dy);
-            dx = dx / length * this.speed;
-            dy = dy / length * this.speed;
+        // Touch controls take priority
+        if (this.isTouching) {
+            const touchDx = this.touchX - this.x;
+            const touchDy = this.touchY - this.y;
+            const distance = Math.sqrt(touchDx * touchDx + touchDy * touchDy);
+            
+            // Only move if touch is far enough from player
+            if (distance > GameConfig.INPUT.TOUCH_MOVE_THRESHOLD) {
+                dx = touchDx / distance;
+                dy = touchDy / distance;
+            }
+        } else {
+            // Keyboard controls
+            if (this.keys.up) dy -= 1;
+            if (this.keys.down) dy += 1;
+            if (this.keys.left) dx -= 1;
+            if (this.keys.right) dx += 1;
+            
+            // Normalize vector to prevent faster diagonal movement
+            if (dx !== 0 || dy !== 0) {
+                const length = Math.sqrt(dx * dx + dy * dy);
+                dx = dx / length;
+                dy = dy / length;
+            }
         }
+        
+        // Apply speed
+        dx *= this.speed;
+        dy *= this.speed;
         
         // Scale by time scale (target 60fps)
         const timeScale = deltaTime / (1000/60);
@@ -155,7 +225,7 @@ export class Player {
     levelUp() {
         this.level++;
         this.exp -= this.nextLevelExp;
-        this.nextLevelExp = Math.floor(this.nextLevelExp * 1.5);
+        this.nextLevelExp = Math.floor(this.nextLevelExp * GameConfig.PLAYER.EXP_SCALING_FACTOR);
         this.game.triggerLevelUp();
     }
 }

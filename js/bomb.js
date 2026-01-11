@@ -1,16 +1,18 @@
 import { Weapon, Projectile } from './weapon.js';
+import { GameConfig } from './game-config.js';
 import { Utils } from './utils.js';
 
 export class Bomb extends Weapon {
     constructor(game, owner) {
         super(game, owner);
-        this.name = "Bomb";
-        this.id = "bomb";
-        this.icon = "💣";
-        this.baseDamage = 50;
-        this.baseCooldown = 1500; // Faster (was 3000)
-        this.speed = 4;
-        this.area = 100; // Explosion radius
+        const config = GameConfig.WEAPONS.BOMB;
+        this.name = config.NAME;
+        this.id = config.ID;
+        this.icon = config.ICON;
+        this.baseDamage = config.BASE_DAMAGE;
+        this.baseCooldown = config.BASE_COOLDOWN;
+        this.speed = config.PROJECTILE_SPEED;
+        this.area = config.EXPLOSION_RADIUS;
     }
     
     fireLogic() {
@@ -39,7 +41,7 @@ export class Bomb extends Weapon {
             this.owner.y,
             vx, vy,
             this.baseDamage,
-            1000, // Flight time approx
+            GameConfig.WEAPONS.BOMB.FUSE_TIME,
             this.id,
             this.area
         ));
@@ -97,8 +99,8 @@ export class BombProjectile extends Projectile {
         
         // Bomb sprite (with Z offset)
         ctx.beginPath();
-        ctx.arc(this.x, this.y + this.z, 6, 0, Math.PI * 2);
-        ctx.fillStyle = '#333';
+        ctx.arc(this.x, this.y + this.z, GameConfig.WEAPONS.BOMB.PROJECTILE_SIZE, 0, Math.PI * 2);
+        ctx.fillStyle = GameConfig.WEAPONS.BOMB.COLOR;
         ctx.fill();
         
         // Fuse

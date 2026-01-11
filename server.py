@@ -12,7 +12,7 @@ import threading
 import time
 
 # サーバー設定
-PORT = 8000
+PORT = 8080
 HOST = "localhost"
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):

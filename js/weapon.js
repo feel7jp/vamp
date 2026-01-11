@@ -1,4 +1,5 @@
 import { Utils } from './utils.js';
+import { GameConfig } from './game-config.js';
 
 export class Weapon {
     constructor(game, owner) {
@@ -48,7 +49,7 @@ export class Weapon {
     
     levelUp() {
         this.level++;
-        this.baseDamage *= 1.2;
+        this.baseDamage *= GameConfig.BALANCE.WEAPON_LEVEL_DAMAGE_MULTIPLIER;
         // Specific upgrades in subclasses
         console.log(`${this.name} leveled up to ${this.level}`);
     }
@@ -57,13 +58,14 @@ export class Weapon {
 export class Knife extends Weapon {
     constructor(game, owner) {
         super(game, owner);
-        this.name = "Knife";
-        this.id = "knife";
-        this.icon = "🔪";
-        this.baseDamage = 10;
-        this.baseCooldown = 300; // Much faster
-        this.speed = 10; // Faster projectiles
-        this.amount = 1;
+        const config = GameConfig.WEAPONS.KNIFE;
+        this.name = config.NAME;
+        this.id = config.ID;
+        this.icon = config.ICON;
+        this.baseDamage = config.BASE_DAMAGE;
+        this.baseCooldown = config.BASE_COOLDOWN;
+        this.speed = config.PROJECTILE_SPEED;
+        this.amount = config.STARTING_AMOUNT;
     }
     
     fireLogic() {
@@ -103,7 +105,7 @@ export class Knife extends Weapon {
                 this.owner.y, 
                 vx, vy, 
                 this.baseDamage, 
-                1000, // life
+                GameConfig.WEAPONS.KNIFE.PROJECTILE_LIFE,
                 this.id
             ));
         }
@@ -125,20 +127,23 @@ export class Knife extends Weapon {
     
     levelUp() {
         super.levelUp();
-        if (this.level % 2 === 0) this.amount++; // +1 knife every 2 levels
-        this.baseCooldown *= 0.9;
+        if (this.level % GameConfig.BALANCE.WEAPON_LEVEL_KNIFE_AMOUNT_INTERVAL === 0) {
+            this.amount++;
+        }
+        this.baseCooldown *= GameConfig.BALANCE.WEAPON_LEVEL_COOLDOWN_MULTIPLIER;
     }
 }
 
 export class Garlic extends Weapon {
     constructor(game, owner) {
         super(game, owner);
-        this.name = "Garlic";
-        this.id = "garlic";
-        this.icon = "🧄";
-        this.baseDamage = 3; // Increased from 2
-        this.baseCooldown = 100; // Faster tick rate (was 200)
-        this.range = 60;
+        const config = GameConfig.WEAPONS.GARLIC;
+        this.name = config.NAME;
+        this.id = config.ID;
+        this.icon = config.ICON;
+        this.baseDamage = config.BASE_DAMAGE;
+        this.baseCooldown = config.BASE_COOLDOWN;
+        this.range = config.STARTING_RANGE;
         this.active = true; // Always active
     }
     
@@ -165,8 +170,8 @@ export class Garlic extends Weapon {
     
     levelUp() {
         super.levelUp();
-        this.range *= 1.2;
-        this.baseDamage += 1;
+        this.range *= GameConfig.BALANCE.WEAPON_LEVEL_GARLIC_RANGE_MULTIPLIER;
+        this.baseDamage += GameConfig.BALANCE.WEAPON_LEVEL_GARLIC_DAMAGE_INCREASE;
     }
 }
 
@@ -182,15 +187,15 @@ export class Projectile {
         this.damage = damage;
         this.life = life;
         this.type = type;
-        this.radius = 5;
+        this.radius = GameConfig.WEAPONS.KNIFE.PROJECTILE_RADIUS;
         this.markedForDeletion = false;
         
         this.color = '#fff';
-        if (type === 'knife') this.color = '#f0f';
+        if (type === 'knife') this.color = GameConfig.WEAPONS.KNIFE.COLOR;
     }
     
     update(deltaTime) {
-        const timeScale = deltaTime / (1000/60);
+        const timeScale = deltaTime / GameConfig.TIMING.TARGET_FRAME_TIME;
         this.x += this.vx * timeScale;
         this.y += this.vy * timeScale;
         
@@ -211,13 +216,13 @@ export class Projectile {
 
 export class AuraProjectile extends Projectile {
     constructor(game, owner, radius, damage, type) {
-        super(game, owner.x, owner.y, 0, 0, damage, 100, type); // Short life, renewed constanty or logic handled differently
+        super(game, owner.x, owner.y, 0, 0, damage, 100, type);
         this.owner = owner;
         this.radius = radius;
         this.maxLife = Infinity; // Persists
         this.life = Infinity;
         this.tickTimer = 0;
-        this.tickRate = 200; // Damage every 200ms
+        this.tickRate = GameConfig.WEAPONS.GARLIC.TICK_RATE;
     }
     
     update(deltaTime) {
@@ -246,7 +251,7 @@ export class AuraProjectile extends Projectile {
     render(ctx) {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 100, 100, 0.1)'; // Faint red aura
+        ctx.fillStyle = GameConfig.WEAPONS.GARLIC.COLOR;
         ctx.fill();
         ctx.strokeStyle = 'rgba(255, 100, 100, 0.5)';
         ctx.lineWidth = 1;
