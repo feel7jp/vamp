@@ -8,6 +8,10 @@
     --gold: #ffd700;
     --exp-blue: #4facfe;
     --hp-red: #ff4757;
+
+    /* セーフエリア対応（ノッチ、ホームインジケータ対応） */
+    --safe-area-top: max(env(safe-area-inset-top), 10px);
+    --safe-area-bottom: max(env(safe-area-inset-bottom), 10px);
 }
 
 * {
@@ -123,10 +127,28 @@ p {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    padding: 1rem;
+    padding-top: calc(1rem + var(--safe-area-top));
+    padding-bottom: calc(1rem + var(--safe-area-bottom));
+    padding-left: 1rem;
+    padding-right: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+/* HUD子要素: タッチイベントを遮断しない */
+.hud-top,
+.exp-bar-container,
+.level-badge,
+.exp-bar,
+.game-timer,
+.kill-count,
+.hp-bar-container,
+.hp-bar,
+.weapons-container,
+.weapon-icon,
+.boss-warning {
+    pointer-events: none;
 }
 
 .hud-top {
@@ -179,7 +201,7 @@ p {
     color: white;
     text-shadow: 2px 2px 0 #000;
     position: absolute;
-    top: 50px;
+    top: calc(50px + var(--safe-area-top));
     left: 50%;
     transform: translateX(-50%);
 }
@@ -195,7 +217,7 @@ p {
 
 .hp-bar-container {
     position: absolute;
-    bottom: 20px;
+    bottom: calc(20px + var(--safe-area-bottom));
     left: 50%;
     transform: translateX(-50%);
     width: 300px;
@@ -233,7 +255,7 @@ p {
 /* Weapon Icons */
 .weapons-container {
     position: absolute;
-    bottom: 50px;
+    bottom: calc(50px + var(--safe-area-bottom));
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -411,8 +433,18 @@ p {
         margin-right: 15px;
     }
 
+    /* モバイル: HUD要素のpadding調整 */
+    #hud {
+        padding-top: calc(0.5rem + var(--safe-area-top));
+        padding-bottom: calc(0.5rem + var(--safe-area-bottom));
+    }
+
     .game-timer {
-        top: 60px;
+        top: calc(70px + var(--safe-area-top));
         font-size: 1rem;
+    }
+
+    .hp-bar-container {
+        bottom: calc(15px + var(--safe-area-bottom));
     }
 }
