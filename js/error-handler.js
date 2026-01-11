@@ -75,13 +75,26 @@ export class ErrorHandler {
         this.overlay.style.display = 'block';
         
         let html = `
-            <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="max-width: 1200px; margin: 0 auto; user-select: text;">
                 <h1 style="color: #ff4757; margin-bottom: 20px;">
                     🚨 ゲームエラーが発生しました
                 </h1>
-                <p style="color: #ffd700; margin-bottom: 30px;">
+                <p style="color: #ffd700; margin-bottom: 15px;">
                     以下のエラー情報をコピーして開発者に報告してください
                 </p>
+                <button onclick="navigator.clipboard.writeText(document.getElementById('error-text').innerText).then(() => alert('エラー情報をコピーしました！'))" style="
+                    margin-bottom: 20px;
+                    padding: 10px 20px;
+                    background: #4facfe;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    cursor: pointer;
+                    font-weight: bold;
+                ">📋 全エラー情報をコピー</button>
+                
+                <div id="error-text" style="user-select: text;">
         `;
         
         this.errors.forEach((err, index) => {
@@ -92,6 +105,7 @@ export class ErrorHandler {
                     padding: 15px;
                     margin-bottom: 20px;
                     border-radius: 4px;
+                    user-select: text;
                 ">
                     <div style="color: #ff4757; font-weight: bold; margin-bottom: 10px;">
                         エラー #${index + 1} (${err.timestamp})
@@ -99,7 +113,7 @@ export class ErrorHandler {
                     
                     <div style="margin-bottom: 10px;">
                         <strong style="color: #4facfe;">メッセージ:</strong><br>
-                        <code style="color: #fff; background: #000; padding: 5px 10px; display: block; margin-top: 5px; border-radius: 3px;">
+                        <code style="color: #fff; background: #000; padding: 5px 10px; display: block; margin-top: 5px; border-radius: 3px; user-select: text;">
                             ${this.escapeHtml(err.message)}
                         </code>
                     </div>
@@ -107,7 +121,7 @@ export class ErrorHandler {
                     ${err.filename ? `
                         <div style="margin-bottom: 5px;">
                             <strong style="color: #4facfe;">ファイル:</strong> 
-                            <code style="color: #ffd700;">${err.filename}:${err.lineno}:${err.colno}</code>
+                            <code style="color: #ffd700; user-select: text;">${err.filename}:${err.lineno}:${err.colno}</code>
                         </div>
                     ` : ''}
                     
@@ -122,6 +136,7 @@ export class ErrorHandler {
                                 overflow-x: auto;
                                 font-size: 12px;
                                 color: #ccc;
+                                user-select: text;
                             ">${this.escapeHtml(err.error.stack)}</pre>
                         </details>
                     ` : ''}
@@ -130,10 +145,13 @@ export class ErrorHandler {
         });
         
         html += `
+                </div>
+                
                 <div style="margin-top: 30px; padding: 15px; background: #16213e; border-radius: 4px;">
                     <h3 style="color: #4facfe; margin-top: 0;">💡 デバッグのヒント</h3>
                     <ul style="color: #ccc; line-height: 1.8;">
                         <li><strong>ブラウザのキャッシュをクリア:</strong> Cmd+Shift+R (Mac) / Ctrl+Shift+R (Windows)</li>
+                        <li><strong>Vercelの場合:</strong> 数分待ってからハードリフレッシュ</li>
                         <li><strong>コンソールを確認:</strong> F12キーを押して開発者ツールを開く</li>
                         <li><strong>サーバーを再起動:</strong> ターミナルでCtrl+C → python3 server.py</li>
                         <li><strong>importエラーの場合:</strong> 該当ファイルの先頭にimport文があるか確認</li>
