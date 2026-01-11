@@ -13,7 +13,7 @@ export const GameConfig = {
     STARTING_LEVEL: 1,
     STARTING_EXP: 0,
     INITIAL_NEXT_LEVEL_EXP: 100,
-    EXP_SCALING_FACTOR: 1.5
+    EXP_SCALING_FACTOR: 1.3
   },
   
   // 敵の設定
@@ -78,9 +78,9 @@ export const GameConfig = {
       NAME_JP: 'ガーリック',
       DESCRIPTION_JP: '周囲の敵に継続的にダメージを与える。レベルアップで範囲が広がる。',
       ICON: '🧄',
-      BASE_DAMAGE: 100,
+      BASE_DAMAGE: 10,
       BASE_COOLDOWN: 1000, // ミリ秒（ティックレート）
-      STARTING_RANGE: 60,
+      STARTING_RANGE: 50,
       TICK_RATE: 1000, // ミリ秒（ダメージ間隔）
       COLOR: 'rgba(255, 100, 100, 0.1)'
     },
