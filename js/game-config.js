@@ -141,6 +141,11 @@ export const GameConfig = {
     TOUCH_MOVE_THRESHOLD: 30 // pixels
   },
   
+  // Pickup settings (experience orbs, health packs)
+  PICKUP: {
+    MAGNET_RANGE: 80 // Auto-collection distance
+  },
+  
   // Frame rate
   TIMING: {
     TARGET_FPS: 60,

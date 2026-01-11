@@ -124,7 +124,7 @@ export class Knife extends Weapon {
         });
         return nearest;
     }
-    
+
     levelUp() {
         super.levelUp();
         if (this.level % GameConfig.BALANCE.WEAPON_LEVEL_KNIFE_AMOUNT_INTERVAL === 0) {

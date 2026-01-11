@@ -18,7 +18,7 @@ export class Particle {
     }
     
     update(deltaTime) {
-        const timeScale = deltaTime / (1000/60); // Normalize to 60fps
+        const timeScale = deltaTime / (1000/60);
         
         this.x += this.vx * timeScale;
         this.y += this.vy * timeScale;
@@ -100,11 +100,9 @@ export class ExpOrb {
     
     update(deltaTime) {
         if (!this.game.player) return;
-        
+        // Check magnet range
         const dist = Utils.Vec2.dist(this, this.game.player);
-        
-        // Magnet range
-        const magnetRange = 80;
+        const magnetRange = GameConfig.PICKUP.MAGNET_RANGE;
         
         if (dist < magnetRange || this.isCollected) {
             this.isCollected = true;

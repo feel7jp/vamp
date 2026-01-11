@@ -230,6 +230,29 @@ p {
     color: white;
 }
 
+/* Weapon Icons */
+.weapons-container {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+}
+
+.weapon-icon {
+    font-size: 24px;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 1px solid #444;
+    color: white;
+}
+
 /* Upgrade Cards */
 .upgrade-cards {
     display: flex;
@@ -361,7 +384,7 @@ p {
     h1 {
         font-size: 2rem;
     }
-    
+
     .btn-primary {
         padding: 1.5rem 3rem;
         font-size: 1.3rem;

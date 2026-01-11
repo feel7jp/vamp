@@ -183,7 +183,8 @@ class Game {
         this.pickups.forEach(p => p.update(deltaTime));
         this.damageNumbers.forEach(d => d.update(deltaTime));
         
-        // Cleanup 
+        // フレーム毎のクリーンアップ: 削除マークされたエンティティを配列から除外
+        // Note: filter()は新しい配列を生成するため、大量のエンティティがある場合はGC負荷あり
         this.enemies = this.enemies.filter(e => !e.markedForDeletion);
         this.projectiles = this.projectiles.filter(p => !p.markedForDeletion);
         this.explosions = this.explosions.filter(e => !e.markedForDeletion);
@@ -191,7 +192,8 @@ class Game {
         this.pickups = this.pickups.filter(p => !p.markedForDeletion);
         this.damageNumbers = this.damageNumbers.filter(d => !d.markedForDeletion);
         
-        // Collision: Projectile vs Enemy
+        // 衝突判定: 発射物 vs 敵
+        // Note: O(n*m)の計算量。大量のエンティティがある場合は空間分割を検討
         this.projectiles.forEach(proj => {
             if (proj.type === 'garlic') return; // Handled internally
             
@@ -215,7 +217,7 @@ class Game {
             }
         });
         
-        // Collision: Enemy vs Player
+        // 衝突判定: 敵 vs プレイヤー（接触ダメージ）
         this.enemies.forEach(enemy => {
             if (Utils.Collision.circleRect(this.player, {x: enemy.x - enemy.width/2, y: enemy.y - enemy.height/2, w: enemy.width, h: enemy.height})) {
                  this.player.takeDamage(10 * deltaTime/1000); // Continuous damage

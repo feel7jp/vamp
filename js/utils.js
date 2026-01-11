@@ -72,5 +72,26 @@ export const Utils = {
             const h = Math.floor(Math.random() * 360);
             return `hsl(${h}, 100%, 50%)`;
         }
+    },
+
+    // Time scaling helper (normalizes deltaTime to 60 FPS)
+    getTimeScale: (deltaTime) => deltaTime / (1000 / 60),
+
+    // Enemy utilities
+    Enemy: {
+        getNearestEnemy: (from, enemies, maxRange = Infinity) => {
+            let nearest = null;
+            let minDist = Infinity;
+            
+            enemies.forEach(e => {
+                const d = Utils.Vec2.dist(from, e);
+                if (d < minDist && d < maxRange) {
+                    minDist = d;
+                    nearest = e;
+                }
+            });
+            
+            return nearest;
+        }
     }
 };

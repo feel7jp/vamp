@@ -62,20 +62,9 @@ export class UIManager {
         container.innerHTML = '';
         this.game.player.weapons.forEach(w => {
             const el = document.createElement('div');
-            el.className = 'weapon-icon'; // CSS handles this now if I add it, or use inline
-            // Use inline for quick prototype
+            el.className = 'weapon-icon';
             el.textContent = w.icon;
             el.title = `LV ${w.level} ${w.name}`;
-            el.style.fontSize = '24px';
-            el.style.backgroundColor = 'rgba(0,0,0,0.5)';
-            el.style.width = '40px';
-            el.style.height = '40px';
-            el.style.display = 'flex';
-            el.style.alignItems = 'center';
-            el.style.justifyContent = 'center';
-            el.style.borderRadius = '4px';
-            el.style.border = '1px solid #444';
-            el.style.color = 'white';
             container.appendChild(el);
         });
     }
