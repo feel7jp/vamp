@@ -58,14 +58,30 @@ export class UIManager {
     updateWeaponSlots() {
         if (!this.game.player) return;
         
+        // パフォーマンス最適化: 武器が変更されていない場合はDOM更新をスキップ
+        const weapons = this.game.player.weapons;
+        const weaponSignature = weapons.map(w => `${w.id}-${w.level}`).join(',');
+        if (this._lastWeaponSignature === weaponSignature) return;
+        this._lastWeaponSignature = weaponSignature;
+        
         const container = this.hud.weapons;
         container.innerHTML = '';
-        this.game.player.weapons.forEach(w => {
-            const el = document.createElement('div');
-            el.className = 'weapon-icon';
-            el.textContent = w.icon;
-            el.title = `LV ${w.level} ${w.name}`;
-            container.appendChild(el);
+        weapons.forEach(w => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'weapon-slot';
+            
+            const icon = document.createElement('div');
+            icon.className = 'weapon-icon';
+            icon.textContent = w.icon;
+            icon.title = `LV ${w.level} ${w.name}`;
+            
+            const level = document.createElement('div');
+            level.className = 'weapon-level';
+            level.textContent = w.level;
+            
+            wrapper.appendChild(icon);
+            wrapper.appendChild(level);
+            container.appendChild(wrapper);
         });
     }
     
@@ -85,21 +101,13 @@ export class UIManager {
             icon.className = 'upgrade-icon';
             icon.textContent = opt.icon;
             
-            const title = document.createElement('div');
-            title.className = 'upgrade-title';
-            title.textContent = opt.isNew ? `NEW! ${opt.name}` : opt.name;
-            
-            const type = document.createElement('div');
-            type.className = 'weapon-type';
-            type.textContent = opt.type === 'weapon' ? 'WEAPON' : 'PASSIVE';
+            // 武器名を削除（アイコンと説明のみ）
             
             const desc = document.createElement('div');
             desc.className = 'upgrade-desc';
             desc.textContent = opt.description;
             
             card.appendChild(icon);
-            card.appendChild(title);
-            card.appendChild(type);
             card.appendChild(desc);
             
             container.appendChild(card);

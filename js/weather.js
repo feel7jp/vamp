@@ -17,18 +17,23 @@ export class WeatherSystem {
             this.timer = 0;
         }
         
-        // パーティクルを更新
+        // パーティクルを更新（カメラ座標基準）
         this.particles.forEach(p => {
             p.y += p.speed;
             p.x += p.drift;
             
             // ループ（画面外に出たら上から再表示）
-            if (p.y > this.game.height) {
-                p.y = -10;
-                p.x = Math.random() * this.game.width;
+            const screenBottom = this.game.camera.y + this.game.logicalHeight;
+            const screenTop = this.game.camera.y;
+            const screenLeft = this.game.camera.x;
+            const screenRight = this.game.camera.x + this.game.logicalWidth;
+            
+            if (p.y > screenBottom) {
+                p.y = screenTop - 10;
+                p.x = screenLeft + Math.random() * this.game.logicalWidth;
             }
-            if (p.x > this.game.width) p.x = 0;
-            if (p.x < 0) p.x = this.game.width;
+            if (p.x > screenRight) p.x = screenLeft;
+            if (p.x < screenLeft) p.x = screenRight;
         });
     }
     
@@ -51,8 +56,8 @@ export class WeatherSystem {
             // 視覚的な品質を維持しつつ、レンダリング負荷を半減
             for (let i = 0; i < 50; i++) {
                 this.particles.push({
-                    x: Math.random() * this.game.width,
-                    y: Math.random() * this.game.height,
+                    x: this.game.camera.x + Math.random() * this.game.logicalWidth,
+                    y: this.game.camera.y + Math.random() * this.game.logicalHeight,
                     speed: Utils.Math.randRange(10, 20), // 速い
                     drift: -2, // 左への弱い風
                     length: Utils.Math.randRange(10, 20)
@@ -62,8 +67,8 @@ export class WeatherSystem {
             // 雪は元々50個なので変更なし
              for (let i = 0; i < 50; i++) {
                 this.particles.push({
-                    x: Math.random() * this.game.width,
-                    y: Math.random() * this.game.height,
+                    x: this.game.camera.x + Math.random() * this.game.logicalWidth,
+                    y: this.game.camera.y + Math.random() * this.game.logicalHeight,
                     speed: Utils.Math.randRange(1, 3), // 遅い
                     drift: Utils.Math.randRange(-1, 1), // ゆらゆら
                     size: Utils.Math.randRange(2, 4)
@@ -96,13 +101,13 @@ export class WeatherSystem {
             ctx.fill();
         }
         
-        // 画面全体の色調補正
+        // 画面全体の色調補正（カメラ座標基準）
         if (this.type === 'rain') {
             ctx.fillStyle = 'rgba(0, 0, 50, 0.1)';
-            ctx.fillRect(0, 0, this.game.width, this.game.height);
+            ctx.fillRect(this.game.camera.x, this.game.camera.y, this.game.logicalWidth, this.game.logicalHeight);
         } else if (this.type === 'snow') {
              ctx.fillStyle = 'rgba(200, 200, 255, 0.1)';
-            ctx.fillRect(0, 0, this.game.width, this.game.height);
+            ctx.fillRect(this.game.camera.x, this.game.camera.y, this.game.logicalWidth, this.game.logicalHeight);
         }
     }
 }

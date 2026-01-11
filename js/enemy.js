@@ -74,9 +74,35 @@ export class Enemy {
             moveY = (dy / dist) * this.speed;
         }
         
-        // シンプルな分離ロジック（他の敵と重ならないようにする）
-        // 近くの敵を数体チェック - パフォーマンスのため簡略化
-        // 本格的な最適化ゲームでは、四分木や空間ハッシュを使う
+        // 敵同士の分離ロジック（重ならないようにする）
+        // パフォーマンス最適化: 近くの敵のみチェック（O(N²)の負荷軽減）
+        // ボスは他の敵に邪魔されないようにスキップ
+        if (this.type !== 'boss') {
+            const separationRadius = this.width * 1.5; // 分離判定の距離
+            const separationForce = 0.5; // 分離する力の強さ
+            const maxCheckDistance = separationRadius * 2; // 早期リターン用の距離閾値
+            
+            this.game.enemies.forEach(other => {
+                if (other === this) return; // 自分自身は除外
+                
+                // パフォーマンス最適化: マンハッタン距離で早期リターン（sqrt計算を回避）
+                const roughDist = Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
+                if (roughDist > maxCheckDistance) return; // 遠い敵はスキップ
+                
+                // 詳細な距離計算（近い敵のみ）
+                const otherDx = this.x - other.x;
+                const otherDy = this.y - other.y;
+                const otherDist = Math.sqrt(otherDx * otherDx + otherDy * otherDy);
+                
+                // 近すぎる場合は押し出す
+                if (otherDist < separationRadius && otherDist > 0) {
+                    const pushX = (otherDx / otherDist) * separationForce;
+                    const pushY = (otherDy / otherDist) * separationForce;
+                    moveX += pushX;
+                    moveY += pushY;
+                }
+            });
+        }
         
         const timeScale = deltaTime / (1000/60);
         

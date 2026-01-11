@@ -68,13 +68,15 @@ export class Knife extends Weapon {
         this.amount = config.STARTING_AMOUNT;
     }
     
+    
     fireLogic() {
         for (let i = 0; i < this.amount; i++) {
             // Always target nearest enemy
             let vx = 0;
             let vy = 0;
             
-            const nearest = this.getNearestEnemy();
+            // Utils.Enemy.getNearestEnemy を使用（コードの重複を削減）
+            const nearest = Utils.Enemy.getNearestEnemy(this.owner, this.game.enemies);
             if (nearest) {
                 const angle = Utils.Vec2.angle(this.owner, nearest);
                 // 弾に誤差を追加: ±0.15ラジアン（約±8.6度）のランダムな角度誤差
@@ -114,27 +116,21 @@ export class Knife extends Weapon {
             ));
         }
     }
-    
-    getNearestEnemy() {
-        let nearest = null;
-        let minDist = Infinity;
-        
-        this.game.enemies.forEach(e => {
-            const d = Utils.Vec2.dist(this.owner, e);
-            if (d < minDist) {
-                minDist = d;
-                nearest = e;
-            }
-        });
-        return nearest;
-    }
 
     levelUp() {
-        super.levelUp();
+        // ナイフ専用: レベルアップごとに威力を10％減らす
+        this.level++;
+        this.baseDamage *= 0.9; // 1つあたりの威力を10％減少
+        
+        // ナイフの数を増やす（2レベルごと）
         if (this.level % GameConfig.BALANCE.WEAPON_LEVEL_KNIFE_AMOUNT_INTERVAL === 0) {
             this.amount++;
         }
+        
+        // クールダウンを短縮
         this.baseCooldown *= GameConfig.BALANCE.WEAPON_LEVEL_COOLDOWN_MULTIPLIER;
+        
+        console.log(`${this.name} leveled up to ${this.level}`);
     }
 }
 
@@ -227,13 +223,24 @@ export class AuraProjectile extends Projectile {
         this.life = Infinity;
         this.tickTimer = 0;
         this.tickRate = GameConfig.WEAPONS.GARLIC.TICK_RATE;
+        
+        // パフォーマンス最適化: 武器への参照をキャッシュ（毎フレームfind()を呼ぶ必要なし）
+        this.weaponRef = owner.weapons.find(w => w.id === 'garlic');
     }
     
     update(deltaTime) {
         this.x = this.owner.x;
         this.y = this.owner.y;
-        this.radius = this.owner.weapons.find(w => w.id === 'garlic').range; // Sync range
-        this.damage = this.owner.weapons.find(w => w.id === 'garlic').baseDamage;
+        
+        // キャッシュした武器参照を使用（毎フレームの検索を回避）
+        if (this.weaponRef) {
+            this.radius = this.weaponRef.range;
+            this.damage = this.weaponRef.baseDamage;
+        } else {
+            // 武器が見つからない場合は削除マークして終了
+            this.markedForDeletion = true;
+            return;
+        }
         
         // Garlic logic: Check all enemies in range
         this.tickTimer += deltaTime;

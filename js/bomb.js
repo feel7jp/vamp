@@ -74,7 +74,11 @@ export class BombProjectile extends Projectile {
         
         // 厳密な目標ロジックに合わせて再計算:
         // life変数が爆発タイミングを決定
-        this.maxLife = life; 
+        this.maxLife = life;
+        
+        // 軌跡エフェクト用の位置履歴（最大10点）
+        this.trail = [];
+        this.trailMaxLength = 10; 
     }
     
     update(deltaTime) {
@@ -87,10 +91,25 @@ export class BombProjectile extends Projectile {
         const progress = 1 - (this.life / this.maxLife);
         this.z = Math.sin(progress * Math.PI) * -50; // 放物線の高さ50px
         
-        // 回転ロジックもここに追加可能
+        // 軌跡の記録（現在の位置を追加）
+        this.trail.push({ x: this.x, y: this.y + this.z });
+        if (this.trail.length > this.trailMaxLength) {
+            this.trail.shift(); // 古い位置を削除
+        }
     }
     
     render(ctx) {
+        // 軌跡を描画（グラデーションで薄くなる）
+        for (let i = 0; i < this.trail.length - 1; i++) {
+            const alpha = (i + 1) / this.trail.length; // 古いほど薄い
+            ctx.beginPath();
+            ctx.moveTo(this.trail[i].x, this.trail[i].y);
+            ctx.lineTo(this.trail[i + 1].x, this.trail[i + 1].y);
+            ctx.strokeStyle = `rgba(255, 200, 0, ${alpha * 0.6})`; // 黄色い軌跡
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+        
         // 地面に影を描画
         ctx.beginPath();
         ctx.ellipse(this.x, this.y, 5, 2.5, 0, 0, Math.PI * 2);
@@ -103,8 +122,14 @@ export class BombProjectile extends Projectile {
         ctx.fillStyle = GameConfig.WEAPONS.BOMB.COLOR;
         ctx.fill();
         
-        // 導火線
-        ctx.fillStyle = 'red';
+        // 外周の光（視認性向上）
+        ctx.strokeStyle = 'rgba(255, 100, 0, 0.8)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // 導火線（点滅アニメーション）
+        const flickerAlpha = Math.random() > 0.5 ? 1.0 : 0.6;
+        ctx.fillStyle = `rgba(255, 50, 50, ${flickerAlpha})`;
         ctx.fillRect(this.x - 2, this.y + this.z - 8, 4, 4);
     }
 }

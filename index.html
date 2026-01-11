@@ -6,7 +6,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>V Survivor</title>
-    <link rel="stylesheet" href="css/style.css?v=20260111204400">
+    <link rel="stylesheet" href="css/style.css?v=20260111210000">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap"
@@ -17,28 +17,33 @@
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
 
-        <!-- HUD -->
+        <!-- HUD: 画面上部に横一列で表示 -->
         <div id="hud">
-            <div class="hud-top">
-                <div class="exp-bar-container">
+            <div class="hud-bar">
+                <!-- 左側: レベルと経験値 -->
+                <div class="hud-left">
                     <div class="level-badge" id="hud-level">LV 1</div>
                     <div class="exp-bar">
                         <div class="exp-fill" id="hud-exp-fill" style="width: 0%"></div>
                     </div>
                 </div>
-                <div class="game-timer" id="hud-timer">00:00</div>
-                <div class="kill-count">💀 <span id="hud-kills">0</span></div>
-            </div>
 
-            <div class="hp-bar-container">
-                <div class="hp-bar">
-                    <div class="hp-fill" id="hud-hp-fill" style="width: 100%"></div>
-                    <span class="hp-text" id="hud-hp-text">100 / 100</span>
+                <!-- 中央: タイマーとHPバー -->
+                <div class="hud-center">
+                    <div class="game-timer" id="hud-timer">00:00</div>
+                    <div class="hp-bar">
+                        <div class="hp-fill" id="hud-hp-fill" style="width: 100%"></div>
+                        <span class="hp-text" id="hud-hp-text">100 / 100</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="weapons-container" id="hud-weapons">
-                <!-- Weapon icons will be added here dynamically -->
+                <!-- 右側: 武器と撒破数 -->
+                <div class="hud-right">
+                    <div class="weapons-container" id="hud-weapons">
+                        <!-- Weapon icons will be added here dynamically -->
+                    </div>
+                    <div class="kill-count">💀 <span id="hud-kills">0</span></div>
+                </div>
             </div>
 
             <div id="boss-warning" class="boss-warning">WARNING!<br>BOSS APPROACHING</div>
@@ -89,10 +94,10 @@
     </div>
 
     <!-- Error Handler (loads first to catch all errors) -->
-    <script type="module" src="js/error-handler.js?v=20260111203200"></script>
+    <script type="module" src="js/error-handler.js?v=20260111210000"></script>
 
     <!-- Game Scripts -->
-    <script type="module" src="js/game.js?v=20260111203200"></script>
+    <script type="module" src="js/game.js?v=20260111210000"></script>
 </body>
 
 </html>

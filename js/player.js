@@ -37,124 +37,206 @@ export class Player {
         this.touchY = 0;
         this.isTouching = false;
         
+        // ノックバック状態
+        this.knockbackVelocityX = 0;
+        this.knockbackVelocityY = 0;
+        this.knockbackTimer = 0;
+        
+        // ダメージクールダウン（無敵時間）
+        this.lastDamageTime = 0;
+        this.damageCooldown = 500; // ミリ秒（0.5秒）
+        
         // 入力リスナーの設定
         this.setupInput();
     }
     
     setupInput() {
-        // キーボード操作
-        window.addEventListener('keydown', (e) => {
+        // イベントハンドラの参照を保存（メモリリーク防止のため）
+        this.keydownHandler = (e) => {
             switch(e.key) {
                 case 'ArrowUp': case 'w': case 'W': this.keys.up = true; break;
                 case 'ArrowDown': case 's': case 'S': this.keys.down = true; break;
                 case 'ArrowLeft': case 'a': case 'A': this.keys.left = true; break;
                 case 'ArrowRight': case 'd': case 'D': this.keys.right = true; break;
             }
-        });
+        };
         
-        window.addEventListener('keyup', (e) => {
+        this.keyupHandler = (e) => {
             switch(e.key) {
                 case 'ArrowUp': case 'w': case 'W': this.keys.up = false; break;
                 case 'ArrowDown': case 's': case 'S': this.keys.down = false; break;
                 case 'ArrowLeft': case 'a': case 'A': this.keys.left = false; break;
                 case 'ArrowRight': case 'd': case 'D': this.keys.right = false; break;
             }
-        });
+        };
+        
+        // キーボード操作
+        window.addEventListener('keydown', this.keydownHandler);
+        window.addEventListener('keyup', this.keyupHandler);
         
         // タッチ操作
         const canvas = this.game.canvas;
         
-        canvas.addEventListener('touchstart', (e) => {
+        this.touchstartHandler = (e) => {
             e.preventDefault();
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
-            this.touchX = touch.clientX - rect.left;
-            this.touchY = touch.clientY - rect.top;
+            
+            // 画面座標からワールド座標への変換
+            const physicalX = touch.clientX - rect.left;
+            const physicalY = touch.clientY - rect.top;
+            // スケールを考慮して論理座標に変換
+            const logicalX = physicalX / this.game.scale;
+            const logicalY = physicalY / this.game.scale;
+            // カメラオフセットを加算してワールド座標に変換
+            this.touchX = logicalX + this.game.camera.x;
+            this.touchY = logicalY + this.game.camera.y;
             this.isTouching = true;
-        });
+        };
         
-        canvas.addEventListener('touchmove', (e) => {
+        this.touchmoveHandler = (e) => {
             e.preventDefault();
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
-            this.touchX = touch.clientX - rect.left;
-            this.touchY = touch.clientY - rect.top;
-        });
+            
+            // 画面座標からワールド座標への変換
+            const physicalX = touch.clientX - rect.left;
+            const physicalY = touch.clientY - rect.top;
+            // スケールを考慮して論理座標に変換
+            const logicalX = physicalX / this.game.scale;
+            const logicalY = physicalY / this.game.scale;
+            // カメラオフセットを加算してワールド座標に変換
+            this.touchX = logicalX + this.game.camera.x;
+            this.touchY = logicalY + this.game.camera.y;
+        };
         
-        canvas.addEventListener('touchend', () => {
+        this.touchendHandler = () => {
             this.isTouching = false;
-        });
+        };
+        
+        canvas.addEventListener('touchstart', this.touchstartHandler);
+        canvas.addEventListener('touchmove', this.touchmoveHandler);
+        canvas.addEventListener('touchend', this.touchendHandler);
         
         // マウス操作（タッチと同じロジック）
-        canvas.addEventListener('mousedown', (e) => {
+        this.mousedownHandler = (e) => {
             const rect = canvas.getBoundingClientRect();
-            this.touchX = e.clientX - rect.left;
-            this.touchY = e.clientY - rect.top;
+            
+            // 画面座標からワールド座標への変換
+            const physicalX = e.clientX - rect.left;
+            const physicalY = e.clientY - rect.top;
+            // スケールを考慮して論理座標に変換
+            const logicalX = physicalX / this.game.scale;
+            const logicalY = physicalY / this.game.scale;
+            // カメラオフセットを加算してワールド座標に変換
+            this.touchX = logicalX + this.game.camera.x;
+            this.touchY = logicalY + this.game.camera.y;
             this.isTouching = true;
-        });
+        };
         
-        canvas.addEventListener('mousemove', (e) => {
+        this.mousemoveHandler = (e) => {
             if (this.isTouching) {
                 const rect = canvas.getBoundingClientRect();
-                this.touchX = e.clientX - rect.left;
-                this.touchY = e.clientY - rect.top;
+                
+                // 画面座標からワールド座標への変換
+                const physicalX = e.clientX - rect.left;
+                const physicalY = e.clientY - rect.top;
+                // スケールを考慮して論理座標に変換
+                const logicalX = physicalX / this.game.scale;
+                const logicalY = physicalY / this.game.scale;
+                // カメラオフセットを加算してワールド座標に変換
+                this.touchX = logicalX + this.game.camera.x;
+                this.touchY = logicalY + this.game.camera.y;
             }
-        });
+        };
         
-        canvas.addEventListener('mouseup', () => {
+        this.mouseupHandler = () => {
             this.isTouching = false;
-        });
+        };
         
-        canvas.addEventListener('mouseleave', () => {
+        this.mouseleaveHandler = () => {
             this.isTouching = false;
-        });
+        };
+        
+        canvas.addEventListener('mousedown', this.mousedownHandler);
+        canvas.addEventListener('mousemove', this.mousemoveHandler);
+        canvas.addEventListener('mouseup', this.mouseupHandler);
+        canvas.addEventListener('mouseleave', this.mouseleaveHandler);
+    }
+    
+    // メモリリーク防止: イベントリスナーをクリーンアップ
+    destroy() {
+        // キーボードイベントの削除
+        window.removeEventListener('keydown', this.keydownHandler);
+        window.removeEventListener('keyup', this.keyupHandler);
+        
+        // タッチイベントの削除
+        const canvas = this.game.canvas;
+        canvas.removeEventListener('touchstart', this.touchstartHandler);
+        canvas.removeEventListener('touchmove', this.touchmoveHandler);
+        canvas.removeEventListener('touchend', this.touchendHandler);
+        
+        // マウスイベントの削除
+        canvas.removeEventListener('mousedown', this.mousedownHandler);
+        canvas.removeEventListener('mousemove', this.mousemoveHandler);
+        canvas.removeEventListener('mouseup', this.mouseupHandler);
+        canvas.removeEventListener('mouseleave', this.mouseleaveHandler);
     }
     
     update(deltaTime) {
-        // 移動方向を計算
-        let dx = 0;
-        let dy = 0;
-        
-        // タッチ操作が優先
-        if (this.isTouching) {
-            const touchDx = this.touchX - this.x;
-            const touchDy = this.touchY - this.y;
-            const distance = Math.sqrt(touchDx * touchDx + touchDy * touchDy);
-            
-            // タッチ位置がプレイヤーから十分離れている場合のみ移動
-            if (distance > GameConfig.INPUT.TOUCH_MOVE_THRESHOLD) {
-                dx = touchDx / distance;
-                dy = touchDy / distance;
-            }
-        } else {
-            // キーボード操作
-            if (this.keys.up) dy -= 1;
-            if (this.keys.down) dy += 1;
-            if (this.keys.left) dx -= 1;
-            if (this.keys.right) dx += 1;
-            
-            // ベクトルを正規化して斜め移動が速くならないようにする
-            if (dx !== 0 || dy !== 0) {
-                const length = Math.sqrt(dx * dx + dy * dy);
-                dx = dx / length;
-                dy = dy / length;
-            }
-        }
-        
-        // 速度を適用
-        dx *= this.speed;
-        dy *= this.speed;
-        
         // 時間スケールで調整（60fps基準）
         const timeScale = deltaTime / (1000/60);
         
-        // 移動を適用
-        this.x += dx * timeScale;
-        this.y += dy * timeScale;
-        
-        // 画面端のチェック（画面外に出ないようにする）
-        this.x = Utils.Math.clamp(this.x, this.radius, this.game.width - this.radius);
-        this.y = Utils.Math.clamp(this.y, this.radius, this.game.height - this.radius);
+        // ノックバックタイマーを更新
+        if (this.knockbackTimer > 0) {
+            this.knockbackTimer -= deltaTime;
+            
+            // ノックバック移動を適用
+            this.x += this.knockbackVelocityX * timeScale;
+            this.y += this.knockbackVelocityY * timeScale;
+            
+            // ノックバック速度を減衰
+            this.knockbackVelocityX *= 0.9;
+            this.knockbackVelocityY *= 0.9;
+        } else {
+            // 通常の移動処理
+            let dx = 0;
+            let dy = 0;
+            
+            // タッチ操作が優先
+            if (this.isTouching) {
+                const touchDx = this.touchX - this.x;
+                const touchDy = this.touchY - this.y;
+                const distance = Math.sqrt(touchDx * touchDx + touchDy * touchDy);
+                
+                // タッチ位置がプレイヤーから十分離れている場合のみ移動
+                if (distance > GameConfig.INPUT.TOUCH_MOVE_THRESHOLD) {
+                    dx = touchDx / distance;
+                    dy = touchDy / distance;
+                }
+            } else {
+                // キーボード操作
+                if (this.keys.up) dy -= 1;
+                if (this.keys.down) dy += 1;
+                if (this.keys.left) dx -= 1;
+                if (this.keys.right) dx += 1;
+                
+                // ベクトルを正規化して斜め移動が速くならないようにする
+                if (dx !== 0 || dy !== 0) {
+                    const length = Math.sqrt(dx * dx + dy * dy);
+                    dx = dx / length;
+                    dy = dy / length;
+                }
+            }
+            
+            // 速度を適用
+            dx *= this.speed;
+            dy *= this.speed;
+            
+            // 移動を適用（制限なし - 無限に移動可能）
+            this.x += dx * timeScale;
+            this.y += dy * timeScale;
+        }
         
         this.updateWeapons(deltaTime);
     }
@@ -207,11 +289,33 @@ export class Player {
         ctx.shadowBlur = 0;
     }
     
-    takeDamage(amount) {
+    takeDamage(amount, currentTime) {
+        // 瞬間ダメージシステム：0.5秒のクールダウン（無敵時間）
+        if (currentTime - this.lastDamageTime < this.damageCooldown) {
+            return; // クールダウン中はダメージを受けない
+        }
+        
         this.hp -= amount;
+        this.lastDamageTime = currentTime;
+        
         if (this.hp <= 0) {
             this.hp = 0;
             // 死亡処理はGameクラスで行う
+        }
+    }
+    
+    // ノックバックを適用（敵との接触時に呼ばれる）
+    applyKnockback(enemyX, enemyY, force, duration) {
+        // 敵からプレイヤーへの方向ベクトルを計算
+        const dx = this.x - enemyX;
+        const dy = this.y - enemyY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist > 0) {
+            // 正規化して力を適用
+            this.knockbackVelocityX = (dx / dist) * force;
+            this.knockbackVelocityY = (dy / dist) * force;
+            this.knockbackTimer = duration;
         }
     }
     
