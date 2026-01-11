@@ -52,7 +52,8 @@ export class DamageNumber {
         this.game = game;
         this.x = x;
         this.y = y;
-        this.damage = Math.floor(damage);
+        // 内部計算はfloatのまま保持（切り捨てなし）
+        this.damage = damage;
         this.life = 800; // ミリ秒
         this.maxLife = 800;
         this.vy = -1; // 上に浮かぶ
@@ -75,8 +76,10 @@ export class DamageNumber {
         ctx.font = 'bold 12px "Press Start 2P"';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
-        ctx.strokeText(this.damage, this.x, this.y);
-        ctx.fillText(this.damage, this.x, this.y);
+        // 表示時のみ切り上げ（Math.ceil）
+        const displayDamage = Math.ceil(this.damage);
+        ctx.strokeText(displayDamage, this.x, this.y);
+        ctx.fillText(displayDamage, this.x, this.y);
         ctx.globalAlpha = 1.0;
     }
 }

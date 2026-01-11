@@ -78,7 +78,7 @@ export const GameConfig = {
       NAME_JP: 'ガーリック',
       DESCRIPTION_JP: '周囲の敵に継続的にダメージを与える。レベルアップで範囲が広がる。',
       ICON: '🧄',
-      BASE_DAMAGE: 1,
+      BASE_DAMAGE: 10,
       BASE_COOLDOWN: 200, // ミリ秒（ティックレート）
       STARTING_RANGE: 60,
       TICK_RATE: 200, // ミリ秒（ダメージ間隔）
@@ -90,11 +90,11 @@ export const GameConfig = {
       NAME_JP: 'ボム',
       DESCRIPTION_JP: '一定時間後に爆発する爆弾を投げる。広範囲にダメージを与える。',
       ICON: '💣',
-      BASE_DAMAGE: 20,
-      BASE_COOLDOWN: 5000, // ミリ秒
+      BASE_DAMAGE: 500,
+      BASE_COOLDOWN: 3000, // ミリ秒
       PROJECTILE_SPEED: 3,
-      FUSE_TIME: 2000, // ミリ秒
-      EXPLOSION_RADIUS: 100,
+      FUSE_TIME: 1000, // ミリ秒
+      EXPLOSION_RADIUS: 200,
       PROJECTILE_SIZE: 8,
       COLOR: '#8a8585ff'
     }
@@ -102,7 +102,7 @@ export const GameConfig = {
   
   // ゲームバランスの調整
   BALANCE: {
-    DIFFICULTY_INCREASE_PER_MINUTE: 0.2,
+    DIFFICULTY_INCREASE_PER_MINUTE: 0.1,
     BOSS_SPAWN_TIME: 60000, // ミリ秒（1分）
     SPAWN_INTERVAL: 1000, // ミリ秒
     SPAWN_INTERVAL_DECREASE_RATE: 0.95, // レベルごとの減少率
@@ -137,7 +137,7 @@ export const GameConfig = {
     
     // 爆発
     EXPLOSION_LIFETIME: 500, // ミリ秒
-    EXPLOSION_PARTICLE_COUNT: 20
+    EXPLOSION_PARTICLE_COUNT: 100
   },
   
   // ビジュアル
