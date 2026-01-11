@@ -94,7 +94,7 @@ export const GameConfig = {
       BASE_COOLDOWN: 3000, // ミリ秒
       PROJECTILE_SPEED: 3,
       FUSE_TIME: 1000, // ミリ秒
-      EXPLOSION_RADIUS: 200,
+      EXPLOSION_RADIUS: 100,
       PROJECTILE_SIZE: 8,
       COLOR: '#8a8585ff'
     }
