@@ -1,24 +1,24 @@
 /**
- * Game Utility Functions
+ * ゲーム用ユーティリティ関数
  */
 
 export const Utils = {
-    // Vector Operations
+    // ベクトル演算
     Vec2: {
-        add: (v1, v2) => ({ x: v1.x + v2.x, y: v1.y + v2.y }),
-        sub: (v1, v2) => ({ x: v1.x - v2.x, y: v1.y - v2.y }),
-        mul: (v, s) => ({ x: v.x * s, y: v.y * s }),
-        div: (v, s) => ({ x: v.x / s, y: v.y / s }),
-        mag: (v) => Math.sqrt(v.x * v.x + v.y * v.y),
-        normalize: (v) => {
+        add: (v1, v2) => ({ x: v1.x + v2.x, y: v1.y + v2.y }), // 加算
+        sub: (v1, v2) => ({ x: v1.x - v2.x, y: v1.y - v2.y }), // 減算
+        mul: (v, s) => ({ x: v.x * s, y: v.y * s }), // スカラー倍
+        div: (v, s) => ({ x: v.x / s, y: v.y / s }), // スカラー除算
+        mag: (v) => Math.sqrt(v.x * v.x + v.y * v.y), // 長さ（大きさ）
+        normalize: (v) => { // 正規化（単位ベクトル化）
             const m = Math.sqrt(v.x * v.x + v.y * v.y);
             return m === 0 ? { x: 0, y: 0 } : { x: v.x / m, y: v.y / m };
         },
-        dist: (v1, v2) => Math.sqrt(Math.pow(v2.x - v1.x, 2) + Math.pow(v2.y - v1.y, 2)),
-        angle: (v1, v2) => Math.atan2(v2.y - v1.y, v2.x - v1.x)
+        dist: (v1, v2) => Math.sqrt(Math.pow(v2.x - v1.x, 2) + Math.pow(v2.y - v1.y, 2)), // 距離
+        angle: (v1, v2) => Math.atan2(v2.y - v1.y, v2.x - v1.x) // 角度
     },
 
-    // Collision Detection
+    // 衝突判定
     Collision: {
         circleCircle: (c1, c2) => {
             const dx = c1.x - c2.x;
@@ -52,32 +52,32 @@ export const Utils = {
         }
     },
 
-    // Math Helpers
+    // 数学ヘルパー関数
     Math: {
-        lerp: (start, end, t) => start * (1 - t) + end * t,
-        clamp: (val, min, max) => Math.min(Math.max(val, min), max),
-        randRange: (min, max) => Math.random() * (max - min) + min,
-        randInt: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
-        degToRad: (deg) => deg * (Math.PI / 180),
-        radToDeg: (rad) => rad * (180 / Math.PI)
+        lerp: (start, end, t) => start * (1 - t) + end * t, // 線形補間
+        clamp: (val, min, max) => Math.min(Math.max(val, min), max), // 値を範囲内に制限
+        randRange: (min, max) => Math.random() * (max - min) + min, // ランダムな小数
+        randInt: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min, // ランダムな整数
+        degToRad: (deg) => deg * (Math.PI / 180), // 度数法からラジアンへ
+        radToDeg: (rad) => rad * (180 / Math.PI) // ラジアンから度数法へ
     },
 
-    // Random Color Generator
+    // ランダムカラー生成
     Color: {
-        randomPastel: () => {
+        randomPastel: () => { // パステルカラー
             const h = Math.floor(Math.random() * 360);
             return `hsl(${h}, 70%, 80%)`;
         },
-        randomBright: () => {
+        randomBright: () => { // 鮮やかな色
             const h = Math.floor(Math.random() * 360);
             return `hsl(${h}, 100%, 50%)`;
         }
     },
 
-    // Time scaling helper (normalizes deltaTime to 60 FPS)
+    // 時間スケールヘルパー（deltaTimeを60FPSに正規化）
     getTimeScale: (deltaTime) => deltaTime / (1000 / 60),
 
-    // Enemy utilities
+    // 敵関連のユーティリティ
     Enemy: {
         getNearestEnemy: (from, enemies, maxRange = Infinity) => {
             let nearest = null;

@@ -3,11 +3,11 @@ import { Utils } from './utils.js';
 export class WeatherSystem {
     constructor(game) {
         this.game = game;
-        this.type = 'clear'; // clear, rain, snow
+        this.type = 'clear'; // 晴れ、雨、雪
         this.opacity = 0;
         this.particles = [];
         this.timer = 0;
-        this.changeInterval = 30000; // Change every 30s
+        this.changeInterval = 30000; // 30秒ごとに変更
     }
     
     update(deltaTime) {
@@ -17,12 +17,12 @@ export class WeatherSystem {
             this.timer = 0;
         }
         
-        // Update particles
+        // パーティクルを更新
         this.particles.forEach(p => {
             p.y += p.speed;
             p.x += p.drift;
             
-            // Loop
+            // ループ（画面外に出たら上から再表示）
             if (p.y > this.game.height) {
                 p.y = -10;
                 p.x = Math.random() * this.game.width;
@@ -35,7 +35,7 @@ export class WeatherSystem {
     changeWeather() {
         const types = ['clear', 'rain', 'snow'];
         // const nextInfo = types[Math.floor(Math.random() * types.length)];
-        // Force cycle for demo: clear -> rain -> snow
+        // デモ用に固定順でサイクル: 晴れ → 雨 → 雪
         if (this.type === 'clear') this.type = 'rain';
         else if (this.type === 'rain') this.type = 'snow';
         else this.type = 'clear';
@@ -53,8 +53,8 @@ export class WeatherSystem {
                 this.particles.push({
                     x: Math.random() * this.game.width,
                     y: Math.random() * this.game.height,
-                    speed: Utils.Math.randRange(10, 20), // Fast
-                    drift: -2, // Slight left wind
+                    speed: Utils.Math.randRange(10, 20), // 速い
+                    drift: -2, // 左への弱い風
                     length: Utils.Math.randRange(10, 20)
                 });
             }
@@ -64,8 +64,8 @@ export class WeatherSystem {
                 this.particles.push({
                     x: Math.random() * this.game.width,
                     y: Math.random() * this.game.height,
-                    speed: Utils.Math.randRange(1, 3), // Slow
-                    drift: Utils.Math.randRange(-1, 1), // Wobbly
+                    speed: Utils.Math.randRange(1, 3), // 遅い
+                    drift: Utils.Math.randRange(-1, 1), // ゆらゆら
                     size: Utils.Math.randRange(2, 4)
                 });
             }
@@ -96,7 +96,7 @@ export class WeatherSystem {
             ctx.fill();
         }
         
-        // Overlay tint
+        // 画面全体の色調補正
         if (this.type === 'rain') {
             ctx.fillStyle = 'rgba(0, 0, 50, 0.1)';
             ctx.fillRect(0, 0, this.game.width, this.game.height);

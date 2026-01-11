@@ -29,7 +29,7 @@ export class Particle {
             this.markedForDeletion = true;
         }
         
-        // Shrink over time
+        // 時間経過で縮小
         this.currentSize = this.size * (this.life / this.maxLife);
     }
     
@@ -53,12 +53,12 @@ export class DamageNumber {
         this.x = x;
         this.y = y;
         this.damage = Math.floor(damage);
-        this.life = 800; // ms
+        this.life = 800; // ミリ秒
         this.maxLife = 800;
-        this.vy = -1; // Float up
+        this.vy = -1; // 上に浮かぶ
         this.markedForDeletion = false;
         
-        // Random offset for visual variety
+        // 見た目の多様性のためランダムにずらす
         this.x += Utils.Math.randRange(-10, 10);
     }
     
@@ -88,44 +88,44 @@ export class ExpOrb {
         this.y = y;
         this.value = value;
         this.radius = 4;
-        this.color = '#4facfe'; // Cyan
+        this.color = '#4facfe'; // シアン
         if (value > 10) {
             this.radius = 6;
-            this.color = '#a0e6ff'; // Lighter cyan
+            this.color = '#a0e6ff'; // 薄いシアン
         }
         if (value > 100) {
             this.radius = 8;
-            this.color = '#ff4757'; // Red gem
+            this.color = '#ff4757'; // 赤い宝石
         }
         
         this.markedForDeletion = false;
         this.isCollected = false;
-        this.speed = 8; // Fly speed when collected
+        this.speed = 8; // 回収時の飛行速度
     }
     
     update(deltaTime) {
         if (!this.game.player) return;
-        // Check magnet range
+        // 磁石範囲をチェック
         const dist = Utils.Vec2.dist(this, this.game.player);
         const magnetRange = GameConfig.PICKUP.MAGNET_RANGE;
         
         if (dist < magnetRange || this.isCollected) {
             this.isCollected = true;
             
-            // Fly to player
+            // プレイヤーに向かって飛ぶ
             const angle = Math.atan2(this.game.player.y - this.y, this.game.player.x - this.x);
             this.x += Math.cos(angle) * this.speed * (deltaTime / 16);
             this.y += Math.sin(angle) * this.speed * (deltaTime / 16);
             
-            // Accelerate based on deltaTime, with max speed cap
+            // deltaTimeに基づいて加速、最大速度で制限
             const acceleration = 0.5 * (deltaTime / 16);
-            const maxSpeed = 20; // Cap maximum speed
+            const maxSpeed = 20; // 最大速度の上限
             this.speed = Math.min(this.speed + acceleration, maxSpeed);
             
             if (dist < this.game.player.radius) {
                 this.markedForDeletion = true;
                 this.game.player.gainExp(this.value);
-                // Play sound (optional)
+                // サウンド再生（オプション）
             }
         }
     }

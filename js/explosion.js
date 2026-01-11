@@ -7,9 +7,9 @@ export class Explosion {
         this.y = y;
         this.radius = radius;
         this.damage = damage;
-        this.life = 0.5; // seconds
+        this.life = 0.5; // 秒
         this.maxLife = 0.5;
-        this.active = true; // Damage applied once
+        this.active = true; // ダメージは1回だけ適用
     }
     
     update(deltaTime) {
@@ -36,14 +36,14 @@ export class Explosion {
     
     render(ctx) {
         const progress = 1 - (this.life / this.maxLife);
-        const currentRadius = this.radius * Math.sin(progress * Math.PI); // Expand then shrink
+        const currentRadius = this.radius * Math.sin(progress * Math.PI); // 膨らんでから縮む
         
         ctx.beginPath();
         ctx.arc(this.x, this.y, currentRadius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 100, 0, ${this.life / this.maxLife})`; // Fade out orange
+        ctx.fillStyle = `rgba(255, 100, 0, ${this.life / this.maxLife})`; // オレンジ色でフェードアウト
         ctx.fill();
         
-        // Inner white flash
+        // 内側の白い閃光
         if (progress < 0.2) {
              ctx.beginPath();
             ctx.arc(this.x, this.y, currentRadius * 0.7, 0, Math.PI * 2);

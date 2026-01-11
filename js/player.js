@@ -11,7 +11,7 @@ export class Player {
         this.radius = GameConfig.PLAYER.RADIUS;
         this.color = GameConfig.PLAYER.COLOR;
         
-        // Stats
+        // ステータス
         this.speed = GameConfig.PLAYER.SPEED;
         this.hp = GameConfig.PLAYER.STARTING_HP;
         this.maxHp = GameConfig.PLAYER.STARTING_HP;
@@ -19,12 +19,12 @@ export class Player {
         this.exp = GameConfig.PLAYER.STARTING_EXP;
         this.nextLevelExp = GameConfig.PLAYER.INITIAL_NEXT_LEVEL_EXP;
         
-        // Weapons
+        // 武器
         this.weapons = [];
-        this.addWeapon('knife'); // Start with knife
-        this.addWeapon('bomb'); // Start with bomb
+        this.addWeapon('knife'); // ナイフから開始
+        this.addWeapon('bomb'); // 爆弾も最初から持つ
         
-        // Movement state
+        // 移動の状態
         this.keys = {
             up: false,
             down: false,
@@ -32,17 +32,17 @@ export class Player {
             right: false
         };
         
-        // Touch control state
+        // タッチ操作の状態
         this.touchX = 0;
         this.touchY = 0;
         this.isTouching = false;
         
-        // Setup input listeners
+        // 入力リスナーの設定
         this.setupInput();
     }
     
     setupInput() {
-        // Keyboard controls
+        // キーボード操作
         window.addEventListener('keydown', (e) => {
             switch(e.key) {
                 case 'ArrowUp': case 'w': case 'W': this.keys.up = true; break;
@@ -61,7 +61,7 @@ export class Player {
             }
         });
         
-        // Touch controls
+        // タッチ操作
         const canvas = this.game.canvas;
         
         canvas.addEventListener('touchstart', (e) => {
@@ -85,7 +85,7 @@ export class Player {
             this.isTouching = false;
         });
         
-        // Mouse controls (same logic as touch)
+        // マウス操作（タッチと同じロジック）
         canvas.addEventListener('mousedown', (e) => {
             const rect = canvas.getBoundingClientRect();
             this.touchX = e.clientX - rect.left;
@@ -111,29 +111,29 @@ export class Player {
     }
     
     update(deltaTime) {
-        // Calculate movement direction
+        // 移動方向を計算
         let dx = 0;
         let dy = 0;
         
-        // Touch controls take priority
+        // タッチ操作が優先
         if (this.isTouching) {
             const touchDx = this.touchX - this.x;
             const touchDy = this.touchY - this.y;
             const distance = Math.sqrt(touchDx * touchDx + touchDy * touchDy);
             
-            // Only move if touch is far enough from player
+            // タッチ位置がプレイヤーから十分離れている場合のみ移動
             if (distance > GameConfig.INPUT.TOUCH_MOVE_THRESHOLD) {
                 dx = touchDx / distance;
                 dy = touchDy / distance;
             }
         } else {
-            // Keyboard controls
+            // キーボード操作
             if (this.keys.up) dy -= 1;
             if (this.keys.down) dy += 1;
             if (this.keys.left) dx -= 1;
             if (this.keys.right) dx += 1;
             
-            // Normalize vector to prevent faster diagonal movement
+            // ベクトルを正規化して斜め移動が速くならないようにする
             if (dx !== 0 || dy !== 0) {
                 const length = Math.sqrt(dx * dx + dy * dy);
                 dx = dx / length;
@@ -141,18 +141,18 @@ export class Player {
             }
         }
         
-        // Apply speed
+        // 速度を適用
         dx *= this.speed;
         dy *= this.speed;
         
-        // Scale by time scale (target 60fps)
+        // 時間スケールで調整（60fps基準）
         const timeScale = deltaTime / (1000/60);
         
-        // Apply movement
+        // 移動を適用
         this.x += dx * timeScale;
         this.y += dy * timeScale;
         
-        // Boundary checks
+        // 画面端のチェック（画面外に出ないようにする）
         this.x = Utils.Math.clamp(this.x, this.radius, this.game.width - this.radius);
         this.y = Utils.Math.clamp(this.y, this.radius, this.game.height - this.radius);
         
@@ -161,7 +161,7 @@ export class Player {
     
     addWeapon(type) {
         let weapon;
-        // Check if already have it
+        // すでに持っているかチェック
         const existing = this.weapons.find(w => w.id === type);
         if (existing) {
             existing.levelUp();
@@ -176,7 +176,7 @@ export class Player {
         
         if (weapon) {
             this.weapons.push(weapon);
-            // Update HUD
+            // HUDを更新
             this.game.updateWeaponHUD(); 
         }
     }
@@ -186,7 +186,7 @@ export class Player {
     }
     
     render(ctx) {
-        // Draw player body
+        // プレイヤーの本体を描画
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
@@ -196,7 +196,7 @@ export class Player {
         ctx.stroke();
         ctx.closePath();
         
-        // Draw slight glow
+        // 軽い光の効果を描画
         ctx.shadowBlur = 10;
         ctx.shadowColor = this.color;
         ctx.beginPath();
@@ -211,7 +211,7 @@ export class Player {
         this.hp -= amount;
         if (this.hp <= 0) {
             this.hp = 0;
-            // Handle death in Game class
+            // 死亡処理はGameクラスで行う
         }
     }
     

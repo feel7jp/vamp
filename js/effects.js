@@ -16,7 +16,7 @@ export class ScreenShake {
     update(deltaTime) {
         if (this.duration > 0) {
             this.duration -= deltaTime;
-            const currentIntensity = this.intensity * (this.duration / 500); // Fade out
+            const currentIntensity = this.intensity * (this.duration / 500); // フェードアウト
             
             this.x = Utils.Math.randRange(-currentIntensity, currentIntensity);
             this.y = Utils.Math.randRange(-currentIntensity, currentIntensity);
