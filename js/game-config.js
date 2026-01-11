@@ -78,8 +78,8 @@ export const GameConfig = {
       NAME_JP: 'ガーリック',
       DESCRIPTION_JP: '周囲の敵に継続的にダメージを与える。レベルアップで範囲が広がる。',
       ICON: '🧄',
-      BASE_DAMAGE: 10,
-      BASE_COOLDOWN: 200, // ミリ秒（ティックレート）
+      BASE_DAMAGE: 100,
+      BASE_COOLDOWN: 1000, // ミリ秒（ティックレート）
       STARTING_RANGE: 60,
       TICK_RATE: 200, // ミリ秒（ダメージ間隔）
       COLOR: 'rgba(255, 100, 100, 0.1)'
