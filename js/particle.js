@@ -1,4 +1,5 @@
 import { Utils } from './utils.js';
+import { GameConfig } from './game-config.js';
 
 export class Particle {
     constructor(game, x, y, color, speed, size, life) {

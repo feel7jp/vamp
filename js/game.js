@@ -186,7 +186,7 @@ class Game {
         // フレーム毎のクリーンアップ: 削除マークされたエンティティを配列から除外
         // Note: filter()は新しい配列を生成するため、大量のエンティティがある場合はGC負荷あり
         this.enemies = this.enemies.filter(e => !e.markedForDeletion);
-        this.projectiles = this.projectiles.filter(p => !p.markedForDeletion);
+        // projectilesは爆発処理の後にクリーンアップ（下記参照）
         this.explosions = this.explosions.filter(e => !e.markedForDeletion);
         this.particles = this.particles.filter(p => !p.markedForDeletion);
         this.pickups = this.pickups.filter(p => !p.markedForDeletion);
@@ -216,6 +216,10 @@ class Game {
                  this.spawnExplosion(proj.x, proj.y, proj.area, proj.damage);
             }
         });
+        
+        // projectilesのクリーンアップ（爆発処理の後）
+        this.projectiles = this.projectiles.filter(p => !p.markedForDeletion);
+        
         
         // 衝突判定: 敵 vs プレイヤー（接触ダメージ）
         this.enemies.forEach(enemy => {
