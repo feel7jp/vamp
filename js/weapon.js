@@ -170,7 +170,7 @@ export class Garlic extends Weapon {
     
     levelUp() {
         super.levelUp();
-        this.range *= GameConfig.BALANCE.WEAPON_LEVEL_GARLIC_RANGE_MULTIPLIER;
+        this.range += GameConfig.BALANCE.WEAPON_LEVEL_GARLIC_RANGE_INCREASE;
         this.baseDamage += GameConfig.BALANCE.WEAPON_LEVEL_GARLIC_DAMAGE_INCREASE;
     }
 }
