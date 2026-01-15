@@ -22,7 +22,7 @@ export const GameConfig = {
       WIDTH: 30,
       HEIGHT: 30,
       SPEED: 1.5,
-      HP: 10,
+      HP: 20,
       DAMAGE: 20,
       EXP_VALUE: 10,
       COLOR: '#bbe070ff',
@@ -41,10 +41,10 @@ export const GameConfig = {
       KNOCKBACK_DURATION: 100
     },
     TANK: {
-      WIDTH: 50,
-      HEIGHT: 50,
+      WIDTH: 70,
+      HEIGHT: 70,
       SPEED: 1.0,
-      HP: 300,
+      HP: 500,
       DAMAGE: 10,
       EXP_VALUE: 200,
       COLOR: '#9d0a0aff',
@@ -78,11 +78,11 @@ export const GameConfig = {
       PROJECTILE_LIFE: 1000, // ミリ秒
       STARTING_AMOUNT: 1,
       PROJECTILE_RADIUS: 5,
-      COLOR: 'rgb(130, 136, 200)',
+      COLOR: 'rgba(255, 255, 255, 0.82)',
       LEVEL_UP: {
         // AMOUNT_INTERVAL: 2, // 2レベル毎にナイフ+1
         // COOLDOWN_MULTIPLIER: 0.9,
-        DAMAGE_MULTIPLIER: 0.95
+        DAMAGE_MULTIPLIER: 0.99
       }
     },
     GARLIC: {
@@ -93,9 +93,9 @@ export const GameConfig = {
       ICON: '🧄',
       BASE_DAMAGE: 10,
       BASE_COOLDOWN: 1000, // ミリ秒（ティックレート）
-      STARTING_RANGE: 100,
-      TICK_RATE: 100, // ミリ秒（ダメージ間隔）
-      COLOR: 'rgba(255, 100, 100, 0.1)',
+      EXPLOSION_RADIUS: 100,
+      TICK_RATE: 300, // ミリ秒（ダメージ間隔）
+      COLOR: 'rgba(239, 100, 255, 0.85)',
       LEVEL_UP: {
         // DAMAGE_MULTIPLIER: 1.2,
         RANGE_INCREASE: 10, // レベル毎に+10
@@ -108,17 +108,18 @@ export const GameConfig = {
       NAME_JP: 'ボム',
       DESCRIPTION_JP: '一定時間後に爆発する爆弾を投げる。広範囲にダメージを与える。',
       ICON: '💣',
-      BASE_DAMAGE: 500,
+      BASE_DAMAGE: 300,
       BASE_COOLDOWN: 2000, // ミリ秒
       PROJECTILE_SPEED: 3,
       FUSE_TIME: 1000, // ミリ秒
       EXPLOSION_RADIUS: 100,
       PROJECTILE_SIZE: 8,
-      COLOR: '#8a8585ff',
+      COLOR: 'rgba(181, 31, 31, 0.68)',
       LEVEL_UP: {
         // DAMAGE_MULTIPLIER: 1.2,
-        RANGE_INCREASE: 20, // レベル毎に+10
-        DAMAGE_INCREASE: 10
+        RANGE_INCREASE: 10, // レベル毎に+10
+        DAMAGE_INCREASE: 100,
+        COOLDOWN_MULTIPLIER: 0.99,
       }
     }
   },
@@ -141,6 +142,7 @@ export const GameConfig = {
     BOSS_SCREEN_SHAKE_DURATION: 500, // ミリ秒
     
 
+  },
   
   // ビジュアル
   VISUAL: {

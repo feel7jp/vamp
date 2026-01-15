@@ -61,6 +61,14 @@ export class Bomb extends Weapon {
         });
         return nearest;
     }
+
+    levelUp() {
+        super.levelUp();
+        const levelConfig = this.levelUpConfig || {};
+        this.area += levelConfig.RANGE_INCREASE ?? 0;
+        this.baseDamage += levelConfig.DAMAGE_INCREASE ?? 0;
+        this.baseCooldown *= levelConfig.COOLDOWN_MULTIPLIER ?? 1;
+    }
 }
 
 export class BombProjectile extends Projectile {

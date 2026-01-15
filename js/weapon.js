@@ -20,6 +20,7 @@ export class Weapon {
         this.area = 1; // Size multiplier
         this.speed = 5;
         this.duration = 1000;
+        this.projectileLife = 1000;
         this.amount = 1; // Number of projectiles
         this.levelUpConfig = null;
     }
@@ -69,6 +70,7 @@ export class Knife extends Weapon {
         this.baseCooldown = config.BASE_COOLDOWN;
         this.speed = config.PROJECTILE_SPEED;
         this.amount = config.STARTING_AMOUNT;
+        this.projectileLife = config.PROJECTILE_LIFE;
         this.levelUpConfig = config.LEVEL_UP;
     }
     
@@ -115,7 +117,7 @@ export class Knife extends Weapon {
                 this.owner.y, 
                 vx, vy, 
                 this.baseDamage, 
-                GameConfig.WEAPONS.KNIFE.PROJECTILE_LIFE,
+                this.projectileLife,
                 this.id
             ));
         }
@@ -147,7 +149,7 @@ export class Garlic extends Weapon {
         this.icon = config.ICON;
         this.baseDamage = config.BASE_DAMAGE;
         this.baseCooldown = config.BASE_COOLDOWN;
-        this.range = config.STARTING_RANGE;
+        this.range = config.EXPLOSION_RADIUS;
         this.active = true; // Always active
         this.levelUpConfig = config.LEVEL_UP;
     }

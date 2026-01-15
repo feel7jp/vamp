@@ -54,7 +54,7 @@ export class WeatherSystem {
         if (this.type === 'rain') {
             // パフォーマンス最適化: パーティクル数を100→50に削減
             // 視覚的な品質を維持しつつ、レンダリング負荷を半減
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 30; i++) {
                 this.particles.push({
                     x: this.game.camera.x + Math.random() * this.game.logicalWidth,
                     y: this.game.camera.y + Math.random() * this.game.logicalHeight,

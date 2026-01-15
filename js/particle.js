@@ -77,7 +77,7 @@ export class DamageNumber {
         const displayDamage = Math.ceil(this.damage);
         const baseSize = 5;
         const maxSize = 72;
-        const scale = 2;
+        const scale = 5;
         const logValue = Math.log10
             ? Math.log10(Math.max(1, displayDamage) + 1)
             : (Math.log(Math.max(1, displayDamage) + 1) / Math.LN10);

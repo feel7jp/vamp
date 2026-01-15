@@ -15,6 +15,7 @@ export class Enemy {
         this.color = defaults.COLOR;
         this.speed = defaults.SPEED;
         this.hp = defaults.HP;
+        this.maxHp = defaults.HP;
         this.damage = defaults.DAMAGE;
         this.expValue = defaults.EXP_VALUE;
         this.knockbackForce = defaults.KNOCKBACK_FORCE;
@@ -46,6 +47,7 @@ export class Enemy {
         // 設定を適用
         this.speed = config.SPEED;
         this.hp = config.HP;
+        this.maxHp = config.HP;
         this.width = config.WIDTH;
         this.height = config.HEIGHT;
         this.color = config.COLOR;
@@ -56,7 +58,8 @@ export class Enemy {
         
         // ゲーム時間に応じて難易度を少し上昇
         const difficultyMultiplier = 1 + (this.game.gameTime / 60000) * GameConfig.BALANCE.DIFFICULTY_INCREASE_PER_MINUTE;
-        this.hp *= difficultyMultiplier;
+        this.maxHp *= difficultyMultiplier;
+        this.hp = this.maxHp;
     }
     
     update(deltaTime) {
@@ -121,6 +124,17 @@ export class Enemy {
         
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+
+        // 体力バー
+        const barWidth = this.width;
+        const barHeight = 4;
+        const barX = this.x - barWidth / 2;
+        const barY = this.y - this.height / 2 - 8;
+        const hpRatio = this.maxHp > 0 ? Math.max(0, this.hp) / this.maxHp : 0;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fillRect(barX, barY, barWidth, barHeight);
+        ctx.fillStyle = '#33dd55';
+        ctx.fillRect(barX, barY, barWidth * hpRatio, barHeight);
         
         // ボスの場合のみ、枠線で強調（shadowBlurより軽量）
         if (this.type === 'boss') {

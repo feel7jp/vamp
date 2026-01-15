@@ -199,7 +199,7 @@ class Game {
         const entityCount = this.enemies.length + this.projectiles.length + this.particles.length + this.pickups.length;
         
         // デバッグ: 大量のエンティティがある場合に警告（100個以上）
-        if (entityCount > 100 && Math.random() < 0.01) { // 1%の確率でログ出力（スパム防止）
+        if (entityCount > 1000 && Math.random() < 0.01) { // 1%の確率でログ出力（スパム防止）
             console.warn(`⚠️ パフォーマンス警告: エンティティ総数=${entityCount} (敵:${this.enemies.length}, 発射物:${this.projectiles.length}, パーティクル:${this.particles.length}, アイテム:${this.pickups.length})`);
         }
         
@@ -291,6 +291,10 @@ class Game {
             this.enemies.forEach(enemy => {
                 if (!proj.markedForDeletion && !enemy.markedForDeletion) {
                     if (Utils.Collision.circleRect(proj, {x: enemy.x - enemy.width/2, y: enemy.y - enemy.height/2, w: enemy.width, h: enemy.height})) {
+                        if (proj.type === 'bomb') {
+                            proj.markedForDeletion = true;
+                            return;
+                        }
                         enemy.takeDamage(proj.damage);
                         this.spawnDamageNumber(enemy.x, enemy.y, proj.damage, proj.color);
                         this.spawnHitParticles(enemy.x, enemy.y, enemy.color);
