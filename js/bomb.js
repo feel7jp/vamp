@@ -13,6 +13,7 @@ export class Bomb extends Weapon {
         this.baseCooldown = config.BASE_COOLDOWN;
         this.speed = config.PROJECTILE_SPEED;
         this.area = config.EXPLOSION_RADIUS;
+        this.levelUpConfig = config.LEVEL_UP;
     }
     
     fireLogic() {

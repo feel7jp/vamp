@@ -48,12 +48,13 @@ export class Particle {
 }
 
 export class DamageNumber {
-    constructor(game, x, y, damage) {
+    constructor(game, x, y, damage, color = '#ffffff') {
         this.game = game;
         this.x = x;
         this.y = y;
         // 内部計算はfloatのまま保持（切り捨てなし）
         this.damage = damage;
+        this.color = color;
         this.life = 800; // ミリ秒
         this.maxLife = 800;
         this.vy = -1; // 上に浮かぶ
@@ -72,12 +73,19 @@ export class DamageNumber {
     render(ctx) {
         const alpha = Math.max(0, this.life / this.maxLife);
         ctx.globalAlpha = alpha;
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 12px "Press Start 2P"';
+        ctx.fillStyle = this.color;
+        const displayDamage = Math.ceil(this.damage);
+        const baseSize = 5;
+        const maxSize = 72;
+        const scale = 2;
+        const logValue = Math.log10
+            ? Math.log10(Math.max(1, displayDamage) + 1)
+            : (Math.log(Math.max(1, displayDamage) + 1) / Math.LN10);
+        const fontSize = Math.min(maxSize, baseSize + logValue * scale);
+        ctx.font = `bold ${fontSize}px "Press Start 2P"`;
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
         // 表示時のみ切り上げ（Math.ceil）
-        const displayDamage = Math.ceil(this.damage);
         ctx.strokeText(displayDamage, this.x, this.y);
         ctx.fillText(displayDamage, this.x, this.y);
         ctx.globalAlpha = 1.0;

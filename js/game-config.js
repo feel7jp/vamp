@@ -13,19 +13,21 @@ export const GameConfig = {
     STARTING_LEVEL: 1,
     STARTING_EXP: 0,
     INITIAL_NEXT_LEVEL_EXP: 100,
-    EXP_SCALING_FACTOR: 1.3
+    EXP_SCALING_FACTOR: 1.2
   },
   
   // 敵の設定
   ENEMY: {
     NORMAL: {
-      WIDTH: 20,
-      HEIGHT: 20,
+      WIDTH: 30,
+      HEIGHT: 30,
       SPEED: 1.5,
       HP: 10,
-      DAMAGE: 10,
+      DAMAGE: 20,
       EXP_VALUE: 10,
-      COLOR: '#bbe070ff'
+      COLOR: '#bbe070ff',
+      KNOCKBACK_FORCE: 50,
+      KNOCKBACK_DURATION: 100
     },
     FAST: {
       WIDTH: 15,
@@ -34,7 +36,9 @@ export const GameConfig = {
       HP: 50,
       DAMAGE: 1,
       EXP_VALUE: 10,
-      COLOR: '#a7e8e7ff'
+      COLOR: '#a7e8e7ff',
+      KNOCKBACK_FORCE: 50,
+      KNOCKBACK_DURATION: 100
     },
     TANK: {
       WIDTH: 50,
@@ -43,7 +47,9 @@ export const GameConfig = {
       HP: 300,
       DAMAGE: 10,
       EXP_VALUE: 200,
-      COLOR: '#9d0a0aff' 
+      COLOR: '#9d0a0aff',
+      KNOCKBACK_FORCE: 50,
+      KNOCKBACK_DURATION: 100
     },
     BOSS: {
       WIDTH: 80,
@@ -52,7 +58,9 @@ export const GameConfig = {
       HP: 1000,
       DAMAGE: 10,
       EXP_VALUE: 1000,
-      COLOR: '#8e44ad' 
+      COLOR: '#8e44ad',
+      KNOCKBACK_FORCE: 200,
+      KNOCKBACK_DURATION: 100
     }
   },
   
@@ -70,7 +78,12 @@ export const GameConfig = {
       PROJECTILE_LIFE: 1000, // ミリ秒
       STARTING_AMOUNT: 1,
       PROJECTILE_RADIUS: 5,
-      COLOR: 'rgba(200, 164, 130, 1)'
+      COLOR: 'rgb(130, 136, 200)',
+      LEVEL_UP: {
+        // AMOUNT_INTERVAL: 2, // 2レベル毎にナイフ+1
+        // COOLDOWN_MULTIPLIER: 0.9,
+        DAMAGE_MULTIPLIER: 0.95
+      }
     },
     GARLIC: {
       ID: 'garlic',
@@ -80,9 +93,14 @@ export const GameConfig = {
       ICON: '🧄',
       BASE_DAMAGE: 10,
       BASE_COOLDOWN: 1000, // ミリ秒（ティックレート）
-      STARTING_RANGE: 50,
-      TICK_RATE: 1000, // ミリ秒（ダメージ間隔）
-      COLOR: 'rgba(255, 100, 100, 0.1)'
+      STARTING_RANGE: 100,
+      TICK_RATE: 100, // ミリ秒（ダメージ間隔）
+      COLOR: 'rgba(255, 100, 100, 0.1)',
+      LEVEL_UP: {
+        // DAMAGE_MULTIPLIER: 1.2,
+        RANGE_INCREASE: 10, // レベル毎に+10
+        DAMAGE_INCREASE: 1
+      }
     },
     BOMB: {
       ID: 'bomb',
@@ -91,12 +109,17 @@ export const GameConfig = {
       DESCRIPTION_JP: '一定時間後に爆発する爆弾を投げる。広範囲にダメージを与える。',
       ICON: '💣',
       BASE_DAMAGE: 500,
-      BASE_COOLDOWN: 3000, // ミリ秒
+      BASE_COOLDOWN: 2000, // ミリ秒
       PROJECTILE_SPEED: 3,
       FUSE_TIME: 1000, // ミリ秒
       EXPLOSION_RADIUS: 100,
       PROJECTILE_SIZE: 8,
-      COLOR: '#8a8585ff'
+      COLOR: '#8a8585ff',
+      LEVEL_UP: {
+        // DAMAGE_MULTIPLIER: 1.2,
+        RANGE_INCREASE: 20, // レベル毎に+10
+        DAMAGE_INCREASE: 10
+      }
     }
   },
   
@@ -109,36 +132,15 @@ export const GameConfig = {
     MIN_SPAWN_INTERVAL: 200, // ミリ秒
     ENEMY_SPAWN_DISTANCE: 100, // 画面端からのピクセル数
     
-    // レベルアップ
-    WEAPON_LEVEL_KNIFE_AMOUNT_INTERVAL: 2, // 2レベル毎にナイフ+1
-    WEAPON_LEVEL_COOLDOWN_MULTIPLIER: 0.9,
-    WEAPON_LEVEL_DAMAGE_MULTIPLIER: 1.2,
-    WEAPON_LEVEL_GARLIC_RANGE_INCREASE: 10, // レベル毎に+10
-    WEAPON_LEVEL_GARLIC_DAMAGE_INCREASE: 0.1,
-    
-    // ノックバック
-    NORMAL_KNOCKBACK_FORCE: 50,  // 通常敵のノックバック力
-    BOSS_KNOCKBACK_FORCE: 200,   // ボスのノックバック力
-    KNOCKBACK_DURATION: 100,    // ノックバック持続時間（ミリ秒）
-    
-    // パーティクル
-    PARTICLE_LIFETIME: 1000, // ミリ秒
-    DAMAGE_NUMBER_LIFETIME: 1000, // ミリ秒
-    EXP_ORB_LIFETIME: 30000, // ミリ秒（30秒）
-    EXP_ORB_COLLECTION_RADIUS: 30,
-    EXP_ORB_ATTRACT_RADIUS: 150,
-    EXP_ORB_ATTRACT_SPEED: 3,
-    
+    // // パーティクル
+
     // エフェクト
     SCREEN_SHAKE_INTENSITY: 5,
     SCREEN_SHAKE_DURATION: 200, // ミリ秒
     BOSS_SCREEN_SHAKE_INTENSITY: 10,
     BOSS_SCREEN_SHAKE_DURATION: 500, // ミリ秒
     
-    // 爆発
-    EXPLOSION_LIFETIME: 500, // ミリ秒
-    EXPLOSION_PARTICLE_COUNT: 100
-  },
+
   
   // ビジュアル
   VISUAL: {

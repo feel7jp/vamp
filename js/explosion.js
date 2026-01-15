@@ -1,12 +1,13 @@
 import { Utils } from './utils.js';
 
 export class Explosion {
-    constructor(game, x, y, radius, damage) {
+    constructor(game, x, y, radius, damage, damageColor = '#ffffff') {
         this.game = game;
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.damage = damage;
+        this.damageColor = damageColor;
         this.life = 0.5; // 秒
         this.maxLife = 0.5;
         this.active = true; // ダメージは1回だけ適用
@@ -21,7 +22,7 @@ export class Explosion {
                 if (Utils.Collision.circleRect({x: this.x, y: this.y, radius: this.radius}, 
                     {x: e.x - e.width/2, y: e.y - e.height/2, w: e.width, h: e.height})) {
                     e.takeDamage(this.damage);
-                    this.game.spawnDamageNumber(e.x, e.y, this.damage);
+                    this.game.spawnDamageNumber(e.x, e.y, this.damage, this.damageColor);
                 }
             });
             

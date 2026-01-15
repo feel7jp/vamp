@@ -10,7 +10,7 @@ export class Weapon {
         this.canShoot = true;
         
         // Stats to be overridden
-        this.baseDamage = 5;
+        this.baseDamage = 10;
         this.baseCooldown = 1000; // ms
         this.name = "Unknown Weapon";
         this.id = "unknown";
@@ -21,6 +21,7 @@ export class Weapon {
         this.speed = 5;
         this.duration = 1000;
         this.amount = 1; // Number of projectiles
+        this.levelUpConfig = null;
     }
     
     update(deltaTime) {
@@ -49,7 +50,9 @@ export class Weapon {
     
     levelUp() {
         this.level++;
-        this.baseDamage *= GameConfig.BALANCE.WEAPON_LEVEL_DAMAGE_MULTIPLIER;
+        const levelConfig = this.levelUpConfig || {};
+        const damageMultiplier = levelConfig.DAMAGE_MULTIPLIER ?? 1;
+        this.baseDamage *= damageMultiplier;
         // Specific upgrades in subclasses
         console.log(`${this.name} leveled up to ${this.level}`);
     }
@@ -66,6 +69,7 @@ export class Knife extends Weapon {
         this.baseCooldown = config.BASE_COOLDOWN;
         this.speed = config.PROJECTILE_SPEED;
         this.amount = config.STARTING_AMOUNT;
+        this.levelUpConfig = config.LEVEL_UP;
     }
     
     
@@ -118,17 +122,17 @@ export class Knife extends Weapon {
     }
 
     levelUp() {
-        // ナイフ専用: レベルアップごとに威力を10％減らす
+        // ナイフ専用: レベルアップごとに威力を減らす
         this.level++;
-        this.baseDamage *= 0.9; // 1つあたりの威力を10％減少
+        const levelConfig = this.levelUpConfig || {};
+        const damageMultiplier = levelConfig.DAMAGE_MULTIPLIER ?? 1;
+        this.baseDamage *= damageMultiplier; // 1つあたりの威力を減少
         
-        // ナイフの数を増やす（2レベルごと）
-        if (this.level % GameConfig.BALANCE.WEAPON_LEVEL_KNIFE_AMOUNT_INTERVAL === 0) {
-            this.amount++;
-        }
+        // ナイフの数を増やす
+        this.amount++;
         
         // クールダウンを短縮
-        this.baseCooldown *= GameConfig.BALANCE.WEAPON_LEVEL_COOLDOWN_MULTIPLIER;
+        // this.baseCooldown *= levelConfig.COOLDOWN_MULTIPLIER ?? 1;
         
         console.log(`${this.name} leveled up to ${this.level}`);
     }
@@ -145,6 +149,7 @@ export class Garlic extends Weapon {
         this.baseCooldown = config.BASE_COOLDOWN;
         this.range = config.STARTING_RANGE;
         this.active = true; // Always active
+        this.levelUpConfig = config.LEVEL_UP;
     }
     
     update(deltaTime) {
@@ -170,8 +175,9 @@ export class Garlic extends Weapon {
     
     levelUp() {
         super.levelUp();
-        this.range += GameConfig.BALANCE.WEAPON_LEVEL_GARLIC_RANGE_INCREASE;
-        this.baseDamage += GameConfig.BALANCE.WEAPON_LEVEL_GARLIC_DAMAGE_INCREASE;
+        const levelConfig = this.levelUpConfig || {};
+        this.range += levelConfig.RANGE_INCREASE ?? 0;
+        this.baseDamage += levelConfig.DAMAGE_INCREASE ?? 0;
     }
 }
 
@@ -192,6 +198,7 @@ export class Projectile {
         
         this.color = '#fff';
         if (type === 'knife') this.color = GameConfig.WEAPONS.KNIFE.COLOR;
+        if (type === 'bomb') this.color = GameConfig.WEAPONS.BOMB.COLOR;
     }
     
     update(deltaTime) {
@@ -253,7 +260,7 @@ export class AuraProjectile extends Projectile {
                      // 理由: 200msごとに全敵に対してパーティクル生成すると、
                      //       敵20体 × 5パーティクル = 100個/秒 の生成で画面が埋まる
                      e.takeDamage(this.damage);
-                     this.game.spawnDamageNumber(e.x, e.y, this.damage);
+                     this.game.spawnDamageNumber(e.x, e.y, this.damage, GameConfig.WEAPONS.GARLIC.COLOR);
                      // this.game.spawnHitParticles(e.x, e.y, e.color); // ← 削除
                 }
             });
@@ -261,11 +268,16 @@ export class AuraProjectile extends Projectile {
     }
     
     render(ctx) {
+        const tickProgress = this.tickRate > 0 ? this.tickTimer / this.tickRate : 0;
+        const clampedProgress = Math.min(Math.max(tickProgress, 0), 1);
+        const fillAlpha = 0.05 + 0.15 * clampedProgress;
+        const strokeAlpha = 0.3 + 0.5 * clampedProgress;
+
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = GameConfig.WEAPONS.GARLIC.COLOR;
+        ctx.fillStyle = `rgba(255, 100, 100, ${fillAlpha})`;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 100, 100, 0.5)';
+        ctx.strokeStyle = `rgba(255, 100, 100, ${strokeAlpha})`;
         ctx.lineWidth = 1;
         ctx.stroke();
     }

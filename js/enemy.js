@@ -17,6 +17,8 @@ export class Enemy {
         this.hp = defaults.HP;
         this.damage = defaults.DAMAGE;
         this.expValue = defaults.EXP_VALUE;
+        this.knockbackForce = defaults.KNOCKBACK_FORCE;
+        this.knockbackDuration = defaults.KNOCKBACK_DURATION;
         
         this.markedForDeletion = false;
         
@@ -49,6 +51,8 @@ export class Enemy {
         this.color = config.COLOR;
         this.expValue = config.EXP_VALUE;
         this.damage = config.DAMAGE;
+        this.knockbackForce = config.KNOCKBACK_FORCE;
+        this.knockbackDuration = config.KNOCKBACK_DURATION;
         
         // ゲーム時間に応じて難易度を少し上昇
         const difficultyMultiplier = 1 + (this.game.gameTime / 60000) * GameConfig.BALANCE.DIFFICULTY_INCREASE_PER_MINUTE;
@@ -147,10 +151,10 @@ export class Enemy {
                     GameConfig.BALANCE.BOSS_SCREEN_SHAKE_INTENSITY,
                     GameConfig.BALANCE.BOSS_SCREEN_SHAKE_DURATION
                 );
-                // ボスの倒した時はパーティクルを増やす（パフォーマンス最適化: 20→10に削減）
-                 for (let i = 0; i < 10; i++) {
+                // ボスの倒した時はパーティクルを増やす
+                for (let i = 0; i < 100; i++) {
                     this.game.spawnHitParticles(this.x, this.y, this.color);
-                 }
+                }
             }
         }
     }

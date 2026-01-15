@@ -292,7 +292,7 @@ class Game {
                 if (!proj.markedForDeletion && !enemy.markedForDeletion) {
                     if (Utils.Collision.circleRect(proj, {x: enemy.x - enemy.width/2, y: enemy.y - enemy.height/2, w: enemy.width, h: enemy.height})) {
                         enemy.takeDamage(proj.damage);
-                        this.spawnDamageNumber(enemy.x, enemy.y, proj.damage);
+                        this.spawnDamageNumber(enemy.x, enemy.y, proj.damage, proj.color);
                         this.spawnHitParticles(enemy.x, enemy.y, enemy.color);
                         proj.markedForDeletion = true; // Destroy projectile (unless piercing)
                         
@@ -304,7 +304,7 @@ class Game {
             
             // Bomb explosion trigger on expiration
             if (proj.markedForDeletion && proj.type === 'bomb') {
-                 this.spawnExplosion(proj.x, proj.y, proj.area, proj.damage);
+                 this.spawnExplosion(proj.x, proj.y, proj.area, proj.damage, proj.color);
             }
         });
         
@@ -326,15 +326,11 @@ class Game {
                  // 瞬間ダメージ（0.5秒のクールダウン付き）
                  this.player.takeDamage(enemy.damage, this.gameTime);
                  
-                 // ノックバックを適用（ボスは強い力、通常敵は弱い力）
-                 const knockbackForce = enemy.type === 'boss' 
-                     ? GameConfig.BALANCE.BOSS_KNOCKBACK_FORCE 
-                     : GameConfig.BALANCE.NORMAL_KNOCKBACK_FORCE;
                  this.player.applyKnockback(
                      enemy.x, 
                      enemy.y, 
-                     knockbackForce, 
-                     GameConfig.BALANCE.KNOCKBACK_DURATION
+                     enemy.knockbackForce, 
+                     enemy.knockbackDuration
                  );
                  
                  const shakeIntensity = enemy.type === 'boss' ? 5 : 2;
@@ -382,12 +378,12 @@ class Game {
         console.log("ボススポーン");
     }
     
-    spawnExplosion(x, y, radius, damage) {
-        this.explosions.push(new Explosion(this, x, y, radius, damage));
+    spawnExplosion(x, y, radius, damage, color) {
+        this.explosions.push(new Explosion(this, x, y, radius, damage, color));
     }
     
-    spawnDamageNumber(x, y, amount) {
-        this.damageNumbers.push(new DamageNumber(this, x, y, amount));
+    spawnDamageNumber(x, y, amount, color) {
+        this.damageNumbers.push(new DamageNumber(this, x, y, amount, color));
     }
     
     spawnHitParticles(x, y, color) {
