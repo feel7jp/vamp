@@ -22,7 +22,7 @@ export const GameConfig = {
       WIDTH: 30,
       HEIGHT: 30,
       SPEED: 1.5,
-      HP: 20,
+      HP: 50,
       DAMAGE: 20,
       EXP_VALUE: 10,
       COLOR: '#bbe070ff',
@@ -35,7 +35,7 @@ export const GameConfig = {
       SPEED: 5.0,
       HP: 50,
       DAMAGE: 1,
-      EXP_VALUE: 10,
+      EXP_VALUE: 100,
       COLOR: '#a7e8e7ff',
       KNOCKBACK_FORCE: 50,
       KNOCKBACK_DURATION: 100
@@ -82,7 +82,7 @@ export const GameConfig = {
       LEVEL_UP: {
         // AMOUNT_INTERVAL: 2, // 2レベル毎にナイフ+1
         // COOLDOWN_MULTIPLIER: 0.9,
-        DAMAGE_MULTIPLIER: 0.99
+        // DAMAGE_MULTIPLIER: 0.99
       }
     },
     GARLIC: {
@@ -93,13 +93,13 @@ export const GameConfig = {
       ICON: '🧄',
       BASE_DAMAGE: 10,
       BASE_COOLDOWN: 1000, // ミリ秒（ティックレート）
-      EXPLOSION_RADIUS: 100,
+      EXPLOSION_RADIUS: 50,
       TICK_RATE: 300, // ミリ秒（ダメージ間隔）
-      COLOR: 'rgba(239, 100, 255, 0.85)',
+      COLOR: 'rgba(211, 38, 226, 0.85)',
       LEVEL_UP: {
         // DAMAGE_MULTIPLIER: 1.2,
         RANGE_INCREASE: 10, // レベル毎に+10
-        DAMAGE_INCREASE: 1
+        DAMAGE_INCREASE: 10
       }
     },
     BOMB: {
@@ -108,13 +108,13 @@ export const GameConfig = {
       NAME_JP: 'ボム',
       DESCRIPTION_JP: '一定時間後に爆発する爆弾を投げる。広範囲にダメージを与える。',
       ICON: '💣',
-      BASE_DAMAGE: 300,
+      BASE_DAMAGE: 500,
       BASE_COOLDOWN: 2000, // ミリ秒
       PROJECTILE_SPEED: 3,
       FUSE_TIME: 1000, // ミリ秒
       EXPLOSION_RADIUS: 100,
       PROJECTILE_SIZE: 8,
-      COLOR: 'rgba(181, 31, 31, 0.68)',
+      COLOR: 'rgba(205, 37, 37, 0.68)',
       LEVEL_UP: {
         // DAMAGE_MULTIPLIER: 1.2,
         RANGE_INCREASE: 10, // レベル毎に+10
@@ -126,11 +126,11 @@ export const GameConfig = {
   
   // ゲームバランスの調整
   BALANCE: {
-    DIFFICULTY_INCREASE_PER_MINUTE: 0.1,
+    DIFFICULTY_INCREASE_PER_MINUTE: 1.0,
     BOSS_SPAWN_TIME: 60000, // ミリ秒（1分）
     SPAWN_INTERVAL: 1000, // ミリ秒
     SPAWN_INTERVAL_DECREASE_RATE: 0.95, // レベルごとの減少率
-    MIN_SPAWN_INTERVAL: 200, // ミリ秒
+    MIN_SPAWN_INTERVAL: 50, // ミリ秒
     ENEMY_SPAWN_DISTANCE: 100, // 画面端からのピクセル数
     
     // // パーティクル

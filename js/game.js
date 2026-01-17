@@ -68,7 +68,7 @@ class Game {
         
         // Spawning
         this.enemySpawnTimer = 0;
-        this.enemySpawnInterval = 1000; // Start with 1 sec
+        this.enemySpawnInterval = GameConfig.BALANCE.SPAWN_INTERVAL; // Start with 1 sec
         
         this.bossSpawnTimer = 0;
         this.bossSpawnInterval = 60000; // 60 sec
@@ -147,7 +147,7 @@ class Game {
         this.ui.updateWeaponSlots();
         
         this.enemySpawnTimer = 0;
-        this.enemySpawnInterval = 1000;
+        this.enemySpawnInterval = GameConfig.BALANCE.SPAWN_INTERVAL;
         
         this.bossSpawnTimer = 0;
         this.bossActive = false;
@@ -235,7 +235,10 @@ class Game {
                 this.spawnEnemy();
                 this.enemySpawnTimer = 0;
                 // Decrease interval slightly over time
-                this.enemySpawnInterval = Math.max(200, 1000 - (this.gameTime / 1000) * 5); 
+                this.enemySpawnInterval = Math.max(
+                    GameConfig.BALANCE.MIN_SPAWN_INTERVAL,
+                    GameConfig.BALANCE.SPAWN_INTERVAL - (this.gameTime / 1000) * GameConfig.BALANCE.SPAWN_INTERVAL_DECREASE_RATE
+                ); 
             }
         }
         

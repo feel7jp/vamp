@@ -125,16 +125,18 @@ export class Enemy {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
 
-        // 体力バー
-        const barWidth = this.width;
-        const barHeight = 4;
-        const barX = this.x - barWidth / 2;
-        const barY = this.y - this.height / 2 - 8;
+        // 体力バー（満タン時は非表示）
         const hpRatio = this.maxHp > 0 ? Math.max(0, this.hp) / this.maxHp : 0;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        ctx.fillRect(barX, barY, barWidth, barHeight);
-        ctx.fillStyle = '#33dd55';
-        ctx.fillRect(barX, barY, barWidth * hpRatio, barHeight);
+        if (hpRatio < 1) {
+            const barWidth = this.width;
+            const barHeight = 4;
+            const barX = this.x - barWidth / 2;
+            const barY = this.y - this.height / 2 - 8;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.fillRect(barX, barY, barWidth, barHeight);
+            ctx.fillStyle = '#33dd55';
+            ctx.fillRect(barX, barY, barWidth * hpRatio, barHeight);
+        }
         
         // ボスの場合のみ、枠線で強調（shadowBlurより軽量）
         if (this.type === 'boss') {
